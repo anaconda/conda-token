@@ -1,8 +1,8 @@
 import os
+import sys
 from argparse import ArgumentParser
 
-from conda_token import __version__
-from conda_token import repo_config
+from conda_token import __version__, repo_config
 
 
 def token_list(args):
@@ -80,10 +80,12 @@ def cli(args=None):
     condarc_path_args(subparser_set)
     subparser_set.set_defaults(func=token_set)
 
+    if len(sys.argv) == 1:
+        sys.argv.append('--help')
+
     args = parser.parse_args(args)
     return args.func(args)
 
 
 if __name__ == '__main__':
-    import sys
     cli(sys.argv[1:])
