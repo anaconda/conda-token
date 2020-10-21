@@ -17,7 +17,7 @@ setup(
     packages=['conda_token'],
     entry_points={
         'console_scripts': [
-            'conda_token=conda_token.cli:cli'
+            'conda-token=conda_token.cli:cli'
         ]
     },
     install_requires=requirements,
