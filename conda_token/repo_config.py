@@ -83,9 +83,9 @@ def token_list():
     return read_binstar_tokens()
 
 
-def token_remove():
+def token_remove(system=None, env=None, file=None,):
     remove_binstar_token(REPO_URL)
-    _remove_default_channels()
+    _remove_default_channels(system, env, file)
     clean_index()
 
 
