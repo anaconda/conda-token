@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
-from conda.base.context import context, reset_context
+from conda.base.context import reset_context
 from conda.gateways.disk.delete import rm_rf
 
 from conda_token.repo_config import configure_default_channels
@@ -33,6 +33,7 @@ def test_default_channels():
     with make_temp_condarc(empty_condarc) as rc:
         configure_default_channels(condarc_file=rc)
         assert _read_test_condarc(rc) == """\
+restore_free_channel: false
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -51,6 +52,7 @@ default_channels:
     with make_temp_condarc(original_condarc) as rc:
         configure_default_channels(condarc_file=rc)
         assert _read_test_condarc(rc) == """\
+restore_free_channel: false
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -69,6 +71,7 @@ default_channels:
     with make_temp_condarc(original_condarc) as rc:
         configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
         assert _read_test_condarc(rc) == """\
+restore_free_channel: false
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -86,6 +89,7 @@ def test_replace_default_channels_with_inactive():
     with make_temp_condarc(empty_condarc) as rc:
         configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
         assert _read_test_condarc(rc) == """\
+restore_free_channel: false
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -100,6 +104,7 @@ default_channels:
 def test_default_channels_with_conda_forge():
     original_condarc = """\
 ssl_verify: true
+restore_free_channel: true
 
 default_channels:
   - https://repo.anaconda.com/pkgs/main
@@ -114,6 +119,7 @@ channel_alias: https://conda.anaconda.org/
         configure_default_channels(condarc_file=rc)
         assert _read_test_condarc(rc) == """\
 ssl_verify: true
+restore_free_channel: false
 
 channels:
   - defaults

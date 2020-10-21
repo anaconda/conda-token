@@ -26,6 +26,32 @@ def clean_index():
     run_command(Commands.CLEAN, '-i')
 
 
+def _set_add_anaconda_token(condarc_system=None, condarc_env=None, condarc_file=None):
+    config_args = ['--set', 'add_anaconda_token', 'true']
+
+    if condarc_system:
+        config_args.append('--system')
+    elif condarc_env:
+        config_args.append('--env')
+    elif condarc_file:
+        config_args.append('--file={}'.format(condarc_file))
+
+    run_command(Commands.CONFIG, *config_args)
+
+
+def _unset_restore_free_channel(condarc_system=None, condarc_env=None, condarc_file=None):
+    config_args = ['--set', 'restore_free_channel', 'false']
+
+    if condarc_system:
+        config_args.append('--system')
+    elif condarc_env:
+        config_args.append('--env')
+    elif condarc_file:
+        config_args.append('--file={}'.format(condarc_file))
+
+    run_command(Commands.CONFIG, *config_args)
+
+
 def _set_channel(channel, prepend=True, condarc_system=None, condarc_env=None, condarc_file=None):
     channel_url = urljoin(REPO_URL, channel)
 
@@ -64,6 +90,7 @@ def _remove_default_channels(condarc_system=None, condarc_env=None, condarc_file
 def configure_default_channels(condarc_system=None, condarc_env=None, condarc_file=None,
                                include_archive_channels=None):
     _remove_default_channels(condarc_system, condarc_env, condarc_file)
+    _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
 
     _set_channel(MAIN_CHANNEL, prepend=True,
                  condarc_system=condarc_system, condarc_env=condarc_env, condarc_file=condarc_file)
@@ -97,5 +124,7 @@ def token_set(token, system=None, env=None, file=None, include_archive_channels=
     remove_binstar_token(REPO_URL)
 
     set_binstar_token(REPO_URL, token)
+    _set_add_anaconda_token(system, env, file)
+
     configure_default_channels(system, env, file, include_archive_channels)
     clean_index()
