@@ -1,5 +1,4 @@
 from os.path import abspath, expanduser, join
-from urllib.parse import urljoin
 import sys
 
 import conda.gateways.logging  # noqa: F401
@@ -7,6 +6,11 @@ from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
 from conda.gateways.anaconda_client import (read_binstar_tokens, remove_binstar_token,
                                             set_binstar_token)
+
+if sys.version_info[0] < 3:
+    from urlparse import urljoin
+else:
+    from urllib.parse import urljoin
 
 REPO_URL = 'https://repo.anaconda.cloud/repo/'
 MAIN_CHANNEL = 'main'
