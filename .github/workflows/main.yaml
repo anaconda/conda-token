@@ -45,13 +45,15 @@ jobs:
         with:
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
-          activate-environment: test-conda-token
-          environment-file: etc/test-environment.yml
+          auto-activate-base: true
+          # activate-environment: test-conda-token
+          # environment-file: etc/test-environment.yml
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash -l {0}
         run: |
+          conda env update --file etc/test-environment.yml --name base
           py.test -xv
       - name: Codecov
         uses: codecov/codecov-action@v1
