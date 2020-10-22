@@ -1,25 +1,12 @@
-import os
-
 import pytest
 from conda.gateways.connection.session import CondaHttpAuth, CondaSession
 from requests import HTTPError
 
-from conda_token.repo_config import token_list, token_remove, token_set
+from conda_token.repo_config import token_list
 
 
-@pytest.fixture(scope='function')
-def remove_token():
-    token_remove()
-    yield
-    token_remove()
-
-
-def test_add_token(remove_token):
-    tokens = token_list()
-    token_set('SECRET')
-    tokens['https://repo.anaconda.cloud/repo/'] = 'SECRET'
-
-    assert token_list() == tokens
+def test_add_token(set_dummy_token):
+    assert token_list()['https://repo.anaconda.cloud/repo/'] == 'SECRET'
 
     base_url = 'https://repo.anaconda.cloud/repo/main/osx-64/repodata.json'
     token_url = 'https://repo.anaconda.cloud/t/SECRET/repo/main/osx-64/repodata.json'
@@ -35,15 +22,9 @@ def test_channeldata_403(remove_token):
     assert r.status_code == 403
 
 
-def test_channeldata_200(remove_token):
-    secret_token = os.environ.get('CE_TOKEN', False)
-    if not secret_token:
-        return
-
-    token_set('fc96b40a762d3826b7d958114336549769188541017cc3ef')
+def test_channeldata_200(set_secret_token):
     repodata_url = 'https://repo.anaconda.cloud/repo/main/osx-64/repodata.json'
     token_url = CondaHttpAuth.add_binstar_token(repodata_url)
-    print(token_url)
 
     session = CondaSession()
     r = session.head(token_url)
