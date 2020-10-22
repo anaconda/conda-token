@@ -48,6 +48,8 @@ jobs:
           activate-environment: test-conda-token
           environment-file: etc/test-environment.yml
       - name: py.test
+        env:
+          CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash -l {0}
         run: |
           py.test -xv
