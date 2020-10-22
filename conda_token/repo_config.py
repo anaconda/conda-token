@@ -72,7 +72,7 @@ def _unset_restore_free_channel(condarc_system: bool = False,
     elif condarc_file:
         config_args.append('--file={}'.format(condarc_file))
 
-    run_command(Commands.CONFIG, *config_args)
+    run_command(Commands.CONFIG, *config_args, use_exception_handler=True)
 
 
 def _set_channel(channel: str, prepend: bool = True,
