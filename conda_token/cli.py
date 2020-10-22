@@ -1,11 +1,16 @@
+"""
+CLI for conda-token.
+"""
+
 import os
 import sys
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from conda_token import __version__, repo_config
 
 
-def token_list(args):
+def token_list(args: Namespace) -> int:
+    """Default function for list subparser."""
     tokens = {k: v for k, v in repo_config.token_list().items() if k == repo_config.REPO_URL}
     if not tokens:
         print('No tokens have been configured for {}'.format(repo_config.REPO_URL))
@@ -14,16 +19,29 @@ def token_list(args):
     for url, token in tokens.items():
         print(url, token)
 
-
-def token_set(args):
-    repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels)
+    return 0
 
 
-def token_remove(args):
-    repo_config.token_remove()
+def token_set(args: Namespace) -> int:
+    try:
+        repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels)
+        return 0
+    except:
+        print("There was a problem setting the token.")
+        return 1
 
 
-def condarc_path_args(parser):
+def token_remove(args: Namespace):
+    try:
+        repo_config.token_remove()
+        return 0
+    except:
+        print("There was a problem removing the existing token.")
+        return 1
+
+
+def condarc_path_args(parser: ArgumentParser):
+    """Add condarc path arguments."""
     config_file_location_group = parser.add_argument_group(
         'Config File Location Selection',
         "Without one of these flags, the user config file at '%s' is used." % repo_config.escaped_user_rc_path
@@ -51,7 +69,7 @@ def condarc_path_args(parser):
     )
 
 
-def cli(args=None):
+def cli(argv: list = None):
     parser = ArgumentParser('conda-token', usage='conda token',
                             description='Configure token access for Anaconda Commercial Edition')
 
@@ -83,7 +101,7 @@ def cli(args=None):
     if len(sys.argv) == 1:
         sys.argv.append('--help')
 
-    args = parser.parse_args(args)
+    args = parser.parse_args(argv)
     return args.func(args)
 
 

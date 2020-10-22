@@ -1,3 +1,7 @@
+"""
+Configure Conda to use Anaconda Commercial Edition.
+"""
+
 from os.path import abspath, expanduser, join
 import sys
 
@@ -23,10 +27,23 @@ escaped_sys_rc_path = abspath(join(sys.prefix, '.condarc')).replace("%", "%%")
 
 
 def clean_index():
+    """Runs conda clean -i.
+
+    It is important to remove index cache when
+    changing the condarc to ensure that the downloaded
+    repodata is correct.
+    """
     run_command(Commands.CLEAN, '-i')
 
 
-def _set_add_anaconda_token(condarc_system=None, condarc_env=None, condarc_file=None):
+def _set_add_anaconda_token(condarc_system: bool = False,
+                            condarc_env: bool = False,
+                            condarc_file: str = None):
+    """Run conda config --set add_anaconda_token true.
+
+    Setting this parameter to true ensures that the token
+    is used when making requests to the repository.
+    """
     config_args = ['--set', 'add_anaconda_token', 'true']
 
     if condarc_system:
@@ -39,7 +56,13 @@ def _set_add_anaconda_token(condarc_system=None, condarc_env=None, condarc_file=
     run_command(Commands.CONFIG, *config_args)
 
 
-def _unset_restore_free_channel(condarc_system=None, condarc_env=None, condarc_file=None):
+def _unset_restore_free_channel(condarc_system: bool = False,
+                                condarc_env: bool = False,
+                                condarc_file: str = None):
+    """Runs conda config --set restore_free_channel false.
+
+    The free channel is provided by Commercial Edition as
+    and should be added directly."""
     config_args = ['--set', 'restore_free_channel', 'false']
 
     if condarc_system:
@@ -52,7 +75,11 @@ def _unset_restore_free_channel(condarc_system=None, condarc_env=None, condarc_f
     run_command(Commands.CONFIG, *config_args)
 
 
-def _set_channel(channel, prepend=True, condarc_system=None, condarc_env=None, condarc_file=None):
+def _set_channel(channel: str, prepend: bool = True,
+                 condarc_system: bool = False,
+                 condarc_env: bool = False,
+                 condarc_file: str = None):
+    """Adds a named Commercial Edition channel to default_channels."""
     channel_url = urljoin(REPO_URL, channel)
 
     config_args = [
@@ -71,7 +98,15 @@ def _set_channel(channel, prepend=True, condarc_system=None, condarc_env=None, c
     run_command(Commands.CONFIG, *config_args)
 
 
-def _remove_default_channels(condarc_system=None, condarc_env=None, condarc_file=None):
+def _remove_default_channels(condarc_system: bool = False,
+                             condarc_env: bool = False,
+                             condarc_file: str = None):
+    """Runs conda config --remove-key default_channels
+
+    It is best to remove the default_channels in case they
+    are not set at the default values before configuring
+    Commercial Edition.
+    """
     config_args = ['--remove-key', 'default_channels']
 
     if condarc_system:
@@ -87,8 +122,20 @@ def _remove_default_channels(condarc_system=None, condarc_env=None, condarc_file
         pass
 
 
-def configure_default_channels(condarc_system=None, condarc_env=None, condarc_file=None,
-                               include_archive_channels=None):
+def configure_default_channels(condarc_system: bool = False,
+                               condarc_env: bool = False,
+                               condarc_file: str = None,
+                               include_archive_channels: list = None):
+    """Configure the default_channels to utilize only Commercial Edition.
+
+
+    This function performs the following actions
+    1. unset default_channels if it exists in the condarc
+    2. unset restore_free_channel if it exists in the condarc
+    3. Add the main, r, and msys2 channels to default_channels
+    4. Optionally add any of the archive channels:
+       free, pro, mro, mro-archive
+    """
     _remove_default_channels(condarc_system, condarc_env, condarc_file)
     _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
 
@@ -110,17 +157,43 @@ def configure_default_channels(condarc_system=None, condarc_env=None, condarc_fi
             raise ValueError('The archive channel %s is not one of %s' % (c, ', '.join(ARCHIVE_CHANNELS)))
 
 
-def token_list():
+def token_list() -> dict:
+    """Return a dictionary of tokens for all configured repository urls.
+
+    Note that this function will return tokens configured for non-Commercial Edition
+    urls."""
     return read_binstar_tokens()
 
 
-def token_remove(system=None, env=None, file=None,):
+def token_remove(system: bool = False,
+                 env: bool = False,
+                 file: str = None):
+    """Completely remove the Commercial Edition token and default_channels.
+
+    This function performs three actions.
+    1. Remove the token
+    2. Remove the custom default_channels in the condarc
+    3. Run conda clean -i
+    """
     remove_binstar_token(REPO_URL)
     _remove_default_channels(system, env, file)
     clean_index()
 
 
-def token_set(token, system=None, env=None, file=None, include_archive_channels=None):
+def token_set(token: str,
+              system: bool = False,
+              env: bool = False,
+              file: str = None,
+              include_archive_channels: list = None):
+    """Set the Commercial Edition token and configure default_channels.
+
+
+    This function performs 4 actions.
+    1. Remove previous Commercial Edition token if present.
+    2. Add token.
+    3. Configure default_channels in the condarc file.
+    4. Run conda clean -i
+    """
     remove_binstar_token(REPO_URL)
 
     set_binstar_token(REPO_URL, token)
