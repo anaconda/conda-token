@@ -53,8 +53,12 @@ jobs:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash -l {0}
         run: |
-          conda env update --file etc/test-environment.yml
-          py.test -xv
+          # conda env update --file etc/test-environment.yml
+          # py.test -xv
+          conda info
+          conda env list
+          which conda
+          which python
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
