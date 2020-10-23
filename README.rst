@@ -39,7 +39,7 @@ To use the Conda CLI run the following in your terminal
 
 .. code-block:: text
 
-   conda install conda-token
+   conda install -n root conda-token
 
 
 Authenticate to Anaconda Commercial Edition
