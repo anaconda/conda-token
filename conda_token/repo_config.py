@@ -3,8 +3,10 @@ Configure Conda to use Anaconda Commercial Edition.
 """
 
 from os.path import abspath, expanduser, join
+from packaging import version
 import sys
 
+import conda
 import conda.gateways.logging  # noqa: F401
 from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
@@ -15,6 +17,8 @@ if sys.version_info[0] < 3:
     from urlparse import urljoin
 else:
     from urllib.parse import urljoin
+
+CONDA_VERSION = version.parse(conda.__version__)
 
 REPO_URL = 'https://repo.anaconda.cloud/repo/'
 MAIN_CHANNEL = 'main'
@@ -137,7 +141,9 @@ def configure_default_channels(condarc_system: bool = False,
        free, pro, mro, mro-archive
     """
     _remove_default_channels(condarc_system, condarc_env, condarc_file)
-    _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
+
+    if CONDA_VERSION > version.parse('4.6'):
+        _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
 
     _set_channel(MAIN_CHANNEL, prepend=True,
                  condarc_system=condarc_system, condarc_env=condarc_env, condarc_file=condarc_file)
