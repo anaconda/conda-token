@@ -32,7 +32,7 @@ jobs:
       #     name: package-${{ github.sha }}
       #     path: ./conda-bld
   test-conda43:
-    name: Test (Conda ${{ conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Test (Conda 4.3, Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
