@@ -46,6 +46,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v1
         with:
           # miniconda-version: ${{ matrix.miniconda-version }}
+          miniconda-version: 4.7.12
           conda-version: ${{ matrix.conda-version }}
           python-version: ${{ matrix.python-version }}
           auto-activate-base: true
