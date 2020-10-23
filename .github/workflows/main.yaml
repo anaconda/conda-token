@@ -31,23 +31,22 @@ jobs:
       #   with:
       #     name: package-${{ github.sha }}
       #     path: ./conda-bld
-  test:
-    name: Test (Conda ${{ matrix.conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
+  test-conda43:
+    name: Test (Conda ${{ conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: ["2.7", "3.5", "3.6", "3.7"] #, "3.8"]
+        python-version: ["2.7", "3.5", "3.6"] #, "3.7"] #, "3.8"]
         # miniconda-version: ["4.3.31", "4.4.10", "4.5.12", "4.6.14", "4.7.12", "latest"]
-        conda-version: ["4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9"]
+        # conda-version: ["4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9"]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v1
         with:
-          # miniconda-version: ${{ matrix.miniconda-version }}
-          miniconda-version: 4.7.12
-          conda-version: ${{ matrix.conda-version }}
+          miniconda-version: 4.6.14
+          conda-version: 4.3
           python-version: ${{ matrix.python-version }}
           auto-activate-base: true
       - name: py.test
