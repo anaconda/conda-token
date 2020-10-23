@@ -68,6 +68,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v1
         with:
           miniconda-version: "latest"
+          conda-version: ${{ matrix.conda-version }}
           python-version: ${{ matrix.python-version }}
           auto-activate-base: true
       - name: py.test
