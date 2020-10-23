@@ -142,7 +142,7 @@ def configure_default_channels(condarc_system=False,
     """
     _remove_default_channels(condarc_system, condarc_env, condarc_file)
 
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
 
     _set_channel(MAIN_CHANNEL, prepend=True,

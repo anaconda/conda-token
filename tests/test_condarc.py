@@ -36,7 +36,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(empty_condarc) as rc:
@@ -57,7 +57,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(original_condarc) as rc:
@@ -82,7 +82,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(original_condarc) as rc:
@@ -102,7 +102,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(empty_condarc) as rc:
@@ -111,7 +111,7 @@ default_channels:
 
 
 def test_default_channels_with_conda_forge():
-    if CONDA_VERSION > version.parse('4.6'):
+    if not (CONDA_VERSION < version.parse('4.7')):
         original_condarc = """\
 ssl_verify: true
 restore_free_channel: true
