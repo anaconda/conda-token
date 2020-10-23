@@ -2,6 +2,8 @@
 CLI for conda-token.
 """
 
+from __future__ import print_function
+
 import os
 import sys
 from argparse import ArgumentParser, Namespace
@@ -9,7 +11,7 @@ from argparse import ArgumentParser, Namespace
 from conda_token import __version__, repo_config
 
 
-def token_list(args: Namespace) -> int:
+def token_list(args):
     """Default function for list subparser."""
     tokens = {k: v for k, v in repo_config.token_list().items() if k == repo_config.REPO_URL}
     if not tokens:
@@ -22,17 +24,17 @@ def token_list(args: Namespace) -> int:
     return 0
 
 
-def token_set(args: Namespace) -> int:
+def token_set(args):
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels)
     return 0
 
 
-def token_remove(args: Namespace) -> int:
+def token_remove(args):
     repo_config.token_remove()
     return 0
 
 
-def condarc_path_args(parser: ArgumentParser):
+def condarc_path_args(parser):
     """Add condarc path arguments."""
     config_file_location_group = parser.add_argument_group(
         'Config File Location Selection',
@@ -61,7 +63,7 @@ def condarc_path_args(parser: ArgumentParser):
     )
 
 
-def cli(argv: list = None):
+def cli(argv=None):
     parser = ArgumentParser('conda-token', usage='conda token',
                             description='Configure token access for Anaconda Commercial Edition')
 

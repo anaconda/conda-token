@@ -1,0 +1,56 @@
+name: Build and test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  package:
+    name: Build package
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: conda-incubator/setup-miniconda@v1
+        with:
+          miniconda-version: "latest"
+          activate-environment: build-conda-token
+          environment-file: etc/build-environment.yml
+          python-version: 3.8
+          auto-activate-base: false
+      - name: Conda Build
+        shell: bash -l {0}
+        run: |
+          conda build conda.recipe --no-test
+          mv $CONDA_PREFIX/conda-bld .
+  test:
+    name: Test (Miniconda ${{ matrix.miniconda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: ["2.7", "3.6", "3.7"]
+        miniconda-version: ["4.6.14", "4.7.12", "latest"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v1
+        with:
+          miniconda-version: ${{ matrix.miniconda-version }}
+          python-version: ${{ matrix.python-version }}
+          auto-activate-base: true
+      - name: py.test
+        env:
+          CE_TOKEN: ${{ secrets.CE_TOKEN }}
+        shell: bash -l {0}
+        run: |
+          conda env update --file etc/test-environment.yml --name base
+          conda activate base && py.test -xv
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./cov.xml
+          env_vars: OS,PYTHON

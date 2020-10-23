@@ -8,8 +8,8 @@ from conda_token.repo_config import token_remove, token_set
 
 @pytest.fixture(scope='session', autouse=True)
 def reset_channels_alias():
-    run_command(Commands.CONFIG, '--remove-key', 'channels', use_except_handler=True)
-    run_command(Commands.CONFIG, '--prepend', 'channels', 'defaults', use_except_handler=True)
+    run_command(Commands.CONFIG, '--remove-key', 'channels', use_exception_handler=True)
+    run_command(Commands.CONFIG, '--prepend', 'channels', 'defaults', use_exception_handler=True)
     run_command(Commands.CONFIG, '--set', 'channel_alias', 'https://conda.anaconda.org', use_exception_handler=True)
 
 

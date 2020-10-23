@@ -1,10 +1,11 @@
 from contextlib import contextmanager
+from packaging import version
 from tempfile import NamedTemporaryFile
 
 from conda.base.context import reset_context
 from conda.gateways.disk.delete import rm_rf
 
-from conda_token.repo_config import configure_default_channels
+from conda_token.repo_config import configure_default_channels, CONDA_VERSION
 
 
 @contextmanager
@@ -29,16 +30,18 @@ def _read_test_condarc(rc):
 
 def test_default_channels():
     empty_condarc = '\n'
-
-    with make_temp_condarc(empty_condarc) as rc:
-        configure_default_channels(condarc_file=rc)
-        assert _read_test_condarc(rc) == """\
-restore_free_channel: false
+    final_condarc = """\
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
+    if not (CONDA_VERSION < version.parse('4.7')):
+        final_condarc = 'restore_free_channel: false\n' + final_condarc
+
+    with make_temp_condarc(empty_condarc) as rc:
+        configure_default_channels(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc
 
 
 def test_replace_default_channels():
@@ -48,16 +51,18 @@ default_channels:
   - https://repo.anaconda.com/pkg/r
   - https://repo.anaconda.com/pkg/msys2
 """
-
-    with make_temp_condarc(original_condarc) as rc:
-        configure_default_channels(condarc_file=rc)
-        assert _read_test_condarc(rc) == """\
-restore_free_channel: false
+    final_condarc = """\
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
+    if not (CONDA_VERSION < version.parse('4.7')):
+        final_condarc = 'restore_free_channel: false\n' + final_condarc
+
+    with make_temp_condarc(original_condarc) as rc:
+        configure_default_channels(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc
 
 
 def test_default_channels_with_inactive():
@@ -67,11 +72,7 @@ default_channels:
   - https://repo.anaconda.com/pkg/r
   - https://repo.anaconda.com/pkg/msys2
 """
-
-    with make_temp_condarc(original_condarc) as rc:
-        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
-        assert _read_test_condarc(rc) == """\
-restore_free_channel: false
+    final_condarc = """\
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -81,15 +82,17 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
+    if not (CONDA_VERSION < version.parse('4.7')):
+        final_condarc = 'restore_free_channel: false\n' + final_condarc
+
+    with make_temp_condarc(original_condarc) as rc:
+        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
+        assert _read_test_condarc(rc) == final_condarc
 
 
 def test_replace_default_channels_with_inactive():
     empty_condarc = '\n'
-
-    with make_temp_condarc(empty_condarc) as rc:
-        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
-        assert _read_test_condarc(rc) == """\
-restore_free_channel: false
+    final_condarc = """\
 default_channels:
   - https://repo.anaconda.cloud/repo/main
   - https://repo.anaconda.cloud/repo/r
@@ -99,10 +102,17 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
+    if not (CONDA_VERSION < version.parse('4.7')):
+        final_condarc = 'restore_free_channel: false\n' + final_condarc
+
+    with make_temp_condarc(empty_condarc) as rc:
+        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
+        assert _read_test_condarc(rc) == final_condarc
 
 
 def test_default_channels_with_conda_forge():
-    original_condarc = """\
+    if not (CONDA_VERSION < version.parse('4.7')):
+        original_condarc = """\
 ssl_verify: true
 restore_free_channel: true
 
@@ -115,11 +125,39 @@ channels:
 channel_alias: https://conda.anaconda.org/
 """
 
-    with make_temp_condarc(original_condarc) as rc:
-        configure_default_channels(condarc_file=rc)
-        assert _read_test_condarc(rc) == """\
+        with make_temp_condarc(original_condarc) as rc:
+            configure_default_channels(condarc_file=rc)
+            assert _read_test_condarc(rc) == """\
 ssl_verify: true
 restore_free_channel: false
+
+channels:
+  - defaults
+  - conda-forge
+
+channel_alias: https://conda.anaconda.org/
+default_channels:
+  - https://repo.anaconda.cloud/repo/main
+  - https://repo.anaconda.cloud/repo/r
+  - https://repo.anaconda.cloud/repo/msys2
+"""
+    else:
+        original_condarc = """\
+ssl_verify: true
+
+default_channels:
+  - https://repo.anaconda.com/pkgs/main
+channels:
+  - defaults
+  - conda-forge
+
+channel_alias: https://conda.anaconda.org/
+"""
+
+        with make_temp_condarc(original_condarc) as rc:
+            configure_default_channels(condarc_file=rc)
+            assert _read_test_condarc(rc) == """\
+ssl_verify: true
 
 channels:
   - defaults

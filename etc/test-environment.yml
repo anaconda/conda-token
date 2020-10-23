@@ -1,0 +1,7 @@
+name: test-conda-token
+channels:
+  - defaults
+dependencies:
+  - pytest
+  - pytest-cov
+  - requests
