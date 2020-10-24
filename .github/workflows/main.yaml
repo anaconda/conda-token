@@ -79,7 +79,8 @@ jobs:
           miniconda-version: "4.7.12"
           conda-version: ${{ matrix.conda-version }}
           python-version: ${{ matrix.python-version }}
-          activate-environment: 'base'
+          activate-environment: ''
+          auto-activate-base: true
           environment-file: etc/test-environment.yml
           auto-update-conda: false
       - name: py.test
