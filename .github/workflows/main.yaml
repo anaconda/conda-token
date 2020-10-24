@@ -76,7 +76,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v1
         with:
-          miniconda-version: "latest"
+          miniconda-version: "4.7.12"
           conda-version: ${{ matrix.conda-version }}
           python-version: ${{ matrix.python-version }}
           activate-environment: 'base'
