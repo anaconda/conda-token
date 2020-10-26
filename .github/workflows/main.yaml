@@ -55,9 +55,8 @@ jobs:
           # conda-version: ${{ matrix.conda-version }}
           # python-version: ${{ matrix.python-version }}
           # environment-file: etc/test-environment.yml
-          # activate-environment: 'test'
           auto-update-conda: false
-          auto-activate-base: false
+          auto-activate-base: true
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
