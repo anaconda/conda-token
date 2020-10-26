@@ -26,49 +26,17 @@ jobs:
         run: |
           conda build conda.recipe --no-test
           mv $CONDA_PREFIX/conda-bld .
-# test:
-#   name: Test (Miniconda ${{ matrix.miniconda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
-#   runs-on: ${{ matrix.os }}
-#   strategy:
-#     fail-fast: false
-#     matrix:
-#       os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-#       python-version: ["2.7", "3.6", "3.7"]
-#       miniconda-version: ["4.6.14", "4.7.12", "latest"]
-#   steps:
-#     - uses: actions/checkout@v2
-#     - uses: conda-incubator/setup-miniconda@v1
-#       with:
-#         miniconda-version: ${{ matrix.miniconda-version }}
-#         python-version: ${{ matrix.python-version }}
-#         auto-activate-base: true
-#     - name: py.test
-#       env:
-#         CE_TOKEN: ${{ secrets.CE_TOKEN }}
-#       shell: bash -l {0}
-#       run: |
-#         conda env update --file etc/test-environment.yml --name base
-#         conda activate base && py.test -xv
-#     - name: Codecov
-#       uses: codecov/codecov-action@v1
-#       with:
-#         file: ./cov.xml
-#         env_vars: OS,PYTHON
-  test-conda48-49:
+  test:
     name: Test (Conda ${{ matrix.conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
-        conda-version: [4.4, 4.5, 4.6, 4.7, 4.8, 4.9]
+        python-version: [2.7, 3.6, 3.7, 3.8]
+        conda-version: [4.6, 4.7, 4.8, 4.9]
         exclude:
           # Python 3.8
-          - python-version: 3.8
-            conda-version: 4.4
-          - python-version: 3.8
-            conda-version: 4.5
           - python-version: 3.8
             conda-version: 4.6
           - python-version: 3.8
@@ -79,40 +47,22 @@ jobs:
             conda-version: 4.8
           - python-version: 2.7
             conda-version: 4.9
-
-          # Python 3.5
-          - python-version: 3.5
-            conda-version: 4.5
-          - python-version: 3.5
-            conda-version: 4.6
-          - python-version: 3.5
-            conda-version: 4.7
-          - python-version: 3.5
-            conda-version: 4.8
-          - python-version: 3.5
-            conda-version: 4.9
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v1
         with:
           miniconda-version: latest
-          # conda-version: ${{ matrix.conda-version }}
-          # python-version: ${{ matrix.python-version }}
+          conda-version: ${{ matrix.conda-version }}
+          python-version: ${{ matrix.python-version }}
           auto-activate-base: true
-          # environment-file: etc/test-environment.yml
           auto-update-conda: false
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash -l {0}
         run: |
-          # conda env update --file etc/test-environment.yml --name base
-          # conda activate base && conda --version && py.test -xv
-          # conda env update --file etc/test-environment.yml --name base
-          conda create -n token-test -c https://repo.anaconda.com/pkgs/free conda=${{ matrix.conda-version }} python=${{ matrix.python-version }}
-          conda env update --file etc/test-environment.yml --name token-test
-          if [ "$RUNNER_OS" == "Windows" ]; then source $CONDA/envs/token-test/Scripts/activate root && conda --version && py.test -xv; fi
-          if [ "$RUNNER_OS" != "Windows" ]; then source $CONDA/envs/token-test/bin/activate root && conda --version && py.test -xv; fi
+          conda env update --file etc/test-environment.yml --name base
+          conda activate base && conda --version && py.test -xv
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
