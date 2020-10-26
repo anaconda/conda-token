@@ -53,14 +53,11 @@ jobs:
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Linux' ]; then
-            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe
-            mv conda-latest-linux-64.exe conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
           elif [ $RUNNER_OS == 'Windows' ]; then
-            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe
-            mv conda-latest-osx-64.exe conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
           elif [ $RUNNER_OS == 'macOS' ]; then
-            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe
-            mv conda-latest-osx-64.exe conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
           fi
           chmod +x conda.exe
           ./conda.exe info
