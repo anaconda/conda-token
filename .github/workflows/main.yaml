@@ -33,20 +33,40 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [2.7, 3.6, 3.7, 3.8]
-        conda-version: [4.6, 4.7, 4.8, 4.9]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        conda-version: [4.5, 4.4, 4.6, 4.7, 4.8, 4.9]
         exclude:
-          # Python 3.8
-          - python-version: 3.8
-            conda-version: 4.6
-          - python-version: 3.8
-            conda-version: 4.7
-
           # Python 2.7
           - python-version: 2.7
             conda-version: 4.8
           - python-version: 2.7
             conda-version: 4.9
+
+          # Python 3.5
+          - python-version: 3.5
+            conda-version: 4.5
+          - python-version: 3.5
+            conda-version: 4.6
+          - python-version: 3.5
+            conda-version: 4.7
+          - python-version: 3.5
+            conda-version: 4.8
+          - python-version: 3.5
+            conda-version: 4.9
+
+          # Python 3.7
+          - python-version: 3.7
+            conda-version: 4.4
+
+          # Python 3.8
+          - python-version: 3.8
+            conda-version: 4.4
+          - python-version: 3.8
+            conda-version: 4.5
+          - python-version: 3.8
+            conda-version: 4.6
+          - python-version: 3.8
+            conda-version: 4.7
     steps:
       - uses: actions/checkout@v2
       - name: Download conda standalone

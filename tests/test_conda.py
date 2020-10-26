@@ -12,18 +12,27 @@ def test_conda_search_rope(set_secret_token):
 def test_conda_install_rope(set_secret_token, uninstall_rope):
     run_command(Commands.INSTALL, 'rope', '-y')
 
-    stdout, _, _ = run_command(Commands.LIST, 'rope', '--json')
+    stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
     rope = json.loads(stdout)[0]
-    assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
+    if rope['base_url'] is None:
+        assert rope['channel'] == 'https://repo.anaconda.cloud/repo/main'
+    else:
+        assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
 
 def test_conda_install_with_conda_forge(set_secret_token, uninstall_rope, uninstall_colorama):
     run_command(Commands.INSTALL, 'defaults::rope', 'conda-forge::colorama', '-y')
 
-    stdout, _, _ = run_command(Commands.LIST, 'rope', '--json')
+    stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
     rope = json.loads(stdout)[0]
-    assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
+    if rope['base_url'] is None:
+        assert rope['channel'] == 'https://repo.anaconda.cloud/repo/main'
+    else:
+        assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
-    stdout, _, _ = run_command(Commands.LIST, 'colorama', '--json')
+    stdout, _, _ = run_command(Commands.LIST, 'colorama', '--show-channel-urls', '--json')
     rope = json.loads(stdout)[0]
-    assert rope['base_url'] == 'https://conda.anaconda.org/conda-forge'
+    if rope['base_url'] is None:
+        assert rope['channel'] == 'conda-forge'
+    else:
+        assert rope['base_url'] == 'https://conda.anaconda.org/conda-forge'
