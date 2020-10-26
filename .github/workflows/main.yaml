@@ -54,13 +54,9 @@ jobs:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash
         run: |
-             if [[ $RUNNER_OS == "Windows" ]]; then
-               wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
-             elif [[ $RUNNER_OS == 'macOS' ]]; then
-               wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
-             elif [[ $RUNNER_OS == 'Linux' ]]; then
-               wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
-             fi
+             [ $RUNNER_OS == "Windows" ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
+             [ $RUNNER_OS == 'macOS' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
+             [ $RUNNER_OS == 'Linux' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
              chmod +x conda.exe
              ./conda.exe info
       - name: Codecov
