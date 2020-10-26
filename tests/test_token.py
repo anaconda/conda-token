@@ -5,7 +5,7 @@ from conda_token.repo_config import token_list
 
 try:
     from conda.gateways.connection.session import CondaHttpAuth, CondaSession
-except ModuleNotFoundError:
+except ImportError:
     from conda.connection import CondaHttpAuth, CondaSession
 
 
