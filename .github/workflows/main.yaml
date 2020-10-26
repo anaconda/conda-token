@@ -53,10 +53,11 @@ jobs:
         with:
           miniconda-version: latest
           # conda-version: ${{ matrix.conda-version }}
-          python-version: ${{ matrix.python-version }}
-          environment-file: etc/test-environment.yml
-          activate-environment: 'test'
+          # python-version: ${{ matrix.python-version }}
+          # environment-file: etc/test-environment.yml
+          # activate-environment: 'test'
           auto-update-conda: false
+          auto-activate-base: false
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
@@ -64,8 +65,10 @@ jobs:
         run: |
           # conda env update --file etc/test-environment.yml --name base
           # conda activate base && conda --version && py.test -xv
-          conda install conda=${{ matrix.conda-version }} -n test
-          py.test -xv
+          # conda install conda=${{ matrix.conda-version }} -n test
+          # py.test -xv
+          conda info
+          conda info -e
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
