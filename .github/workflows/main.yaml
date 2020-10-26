@@ -49,16 +49,31 @@ jobs:
             conda-version: 4.9
     steps:
       - uses: actions/checkout@v2
+      - name: Download conda
+        shell: bash
+        run: |
+          if [ $RUNNER_OS == 'Linux' ]; then
+            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe
+            mv conda-latest-linux-64.exe conda.exe
+          elif [ $RUNNER_OS == 'Windows' ]; then
+            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe
+            mv conda-latest-osx-64.exe conda.exe
+          elif [ $RUNNER_OS == 'macOS' ]; then
+            wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe
+            mv conda-latest-osx-64.exe conda.exe
+          fi
+          ./conda.exe info
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash
         run: |
-             [ $RUNNER_OS == "Windows" ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
-             [ $RUNNER_OS == 'macOS' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
-             [ $RUNNER_OS == 'Linux' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
-             chmod +x conda.exe
-             ./conda.exe info
+            echo 'hello'
+            #  [ $RUNNER_OS == "Windows" ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
+            #  [ $RUNNER_OS == 'macOS' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
+            #  [ $RUNNER_OS == 'Linux' ] && wget https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
+            #  chmod +x conda.exe
+            #  ./conda.exe info
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
