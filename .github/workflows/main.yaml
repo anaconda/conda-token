@@ -34,7 +34,7 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
-        conda-version: [4.5, 4.4, 4.6, 4.7, 4.8, 4.9]
+        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9]
         exclude:
           # Python 2.7
           - python-version: 2.7
@@ -56,9 +56,13 @@ jobs:
 
           # Python 3.7
           - python-version: 3.7
+            conda-version: 4.3
+          - python-version: 3.7
             conda-version: 4.4
 
           # Python 3.8
+          - python-version: 3.8
+            conda-version: 4.3
           - python-version: 3.8
             conda-version: 4.4
           - python-version: 3.8
@@ -80,6 +84,7 @@ jobs:
             curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
           fi
           chmod +x conda.exe
+          ./conda.exe config --set auto_update_conda false
           ./conda.exe info
       - name: Setup miniconda 
         shell: bash
@@ -91,9 +96,9 @@ jobs:
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda --version && py.test -xv
           else
-            source $HOME/miniconda/bin/activate root && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda --version && py.test -xv
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1

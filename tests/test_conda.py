@@ -1,38 +1,51 @@
 import json
 
+from packaging.version import parse
+
 from conda.cli.python_api import Commands, run_command
+from conda_token.repo_config import CONDA_VERSION
 
 
 def test_conda_search_rope(set_secret_token):
-    stdout, _, _ = run_command(Commands.SEARCH, 'rope==0.18.0=py_0', '--json')
+    if CONDA_VERSION < parse('4.4'):
+        stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'rope=0.18.0=py_0', '--json')
+    else:
+        stdout, _, _ = run_command(Commands.SEARCH, 'rope==0.18.0=py_0', '--json')
     rope = json.loads(stdout)['rope'][0]
-    assert rope['channel'] == 'https://repo.anaconda.cloud/repo/main/noarch'
+    assert rope['url'].startswith('https://repo.anaconda.cloud/repo/main/noarch')
 
 
 def test_conda_install_rope(set_secret_token, uninstall_rope):
     run_command(Commands.INSTALL, 'rope', '-y')
 
-    stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
-    rope = json.loads(stdout)[0]
-    if rope['base_url'] is None:
-        assert rope['channel'] == 'https://repo.anaconda.cloud/repo/main'
+    if CONDA_VERSION < parse('4.6'):
+        stdout, _, _ = run_command(Commands.LIST, '--explicit')
+        pkgs = stdout.splitlines()
+        for p in pkgs:
+            if 'rope' in p:
+                assert p.startswith('https://repo.anaconda.cloud/repo/main')
     else:
+        stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
+        rope = json.loads(stdout)[0]
         assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
 
 def test_conda_install_with_conda_forge(set_secret_token, uninstall_rope, uninstall_colorama):
-    run_command(Commands.INSTALL, 'defaults::rope', 'conda-forge::colorama', '-y')
+    run_command(Commands.INSTALL, '-c', 'defaults', '-c', 'conda-forge', 'rope', 'conda-forge-pinning', '-y')
 
-    stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
-    rope = json.loads(stdout)[0]
-    if rope['base_url'] is None:
-        assert rope['channel'] == 'https://repo.anaconda.cloud/repo/main'
+    if CONDA_VERSION < parse('4.6'):
+        stdout, _, _ = run_command(Commands.LIST, '--explicit')
+        pkgs = stdout.splitlines()
+        for p in pkgs:
+            if 'rope' in p:
+                assert p.startswith('https://repo.anaconda.cloud/repo/main')
+            if 'conda-forge-pinning' in p:
+                assert p.startswith('https://conda.anaconda.org/conda-forge')
     else:
+        stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
+        rope = json.loads(stdout)[0]
         assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
-    stdout, _, _ = run_command(Commands.LIST, 'colorama', '--show-channel-urls', '--json')
-    rope = json.loads(stdout)[0]
-    if rope['base_url'] is None:
-        assert rope['channel'] == 'conda-forge'
-    else:
-        assert rope['base_url'] == 'https://conda.anaconda.org/conda-forge'
+        stdout, _, _ = run_command(Commands.LIST, 'conda-forge-pinning', '--show-channel-urls', '--json')
+        conda_forge_pinning = json.loads(stdout)[0]
+        assert conda_forge_pinning['base_url'] == 'https://conda.anaconda.org/conda-forge'
