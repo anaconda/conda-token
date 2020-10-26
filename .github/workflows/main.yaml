@@ -52,17 +52,19 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v1
         with:
           miniconda-version: latest
-          conda-version: ${{ matrix.conda-version }}
+          # conda-version: ${{ matrix.conda-version }}
           python-version: ${{ matrix.python-version }}
-          auto-activate-base: true
+          environment-file: etc/test-environment.yml
           auto-update-conda: false
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash -l {0}
         run: |
-          conda env update --file etc/test-environment.yml --name base
-          conda activate base && conda --version && py.test -xv
+          # conda env update --file etc/test-environment.yml --name base
+          # conda activate base && conda --version && py.test -xv
+          conda install conda=${{ matrix.conda-version }}
+          py.test -xv
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
