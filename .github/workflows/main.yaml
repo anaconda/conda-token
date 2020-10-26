@@ -63,7 +63,7 @@ jobs:
         run: |
           # conda env update --file etc/test-environment.yml --name base
           # conda activate base && conda --version && py.test -xv
-          conda install conda=${{ matrix.conda-version }}
+          # conda install conda=${{ matrix.conda-version }}
           py.test -xv
       - name: Codecov
         uses: codecov/codecov-action@v1
