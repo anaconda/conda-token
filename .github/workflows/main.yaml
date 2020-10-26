@@ -92,6 +92,7 @@ jobs:
           # conda env update --file etc/test-environment.yml --name base
           conda create -n token-test -c https://repo.anaconda.com/pkgs/free conda=${{ matrix.conda-version }} python=${{ matrix.python-version }}
           conda env update --file etc/test-environment.yml --name token-test
+          if [ "$RUNNER_OS" == "Windows" ]; then source $CONDA/envs/token-test/Scripts/activate root && conda --version && py.test -xv; fi
           source $CONDA/envs/token-test/bin/activate root && conda --version && py.test -xv
       - name: Codecov
         uses: codecov/codecov-action@v1
