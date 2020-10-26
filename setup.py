@@ -2,7 +2,8 @@ from setuptools import setup
 import versioneer
 
 requirements = [
-    'conda>=4.3'
+    'conda>=4.3',
+    'packaging'
 ]
 
 setup(

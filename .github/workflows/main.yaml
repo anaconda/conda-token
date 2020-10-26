@@ -27,30 +27,81 @@ jobs:
           conda build conda.recipe --no-test
           mv $CONDA_PREFIX/conda-bld .
   test:
-    name: Test (Miniconda ${{ matrix.miniconda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Test (Conda ${{ matrix.conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: ["2.7", "3.6", "3.7"]
-        miniconda-version: ["4.6.14", "4.7.12", "latest"]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9]
+        exclude:
+          # Python 2.7
+          - python-version: 2.7
+            conda-version: 4.8
+          - python-version: 2.7
+            conda-version: 4.9
+
+          # Python 3.5
+          - python-version: 3.5
+            conda-version: 4.5
+          - python-version: 3.5
+            conda-version: 4.6
+          - python-version: 3.5
+            conda-version: 4.7
+          - python-version: 3.5
+            conda-version: 4.8
+          - python-version: 3.5
+            conda-version: 4.9
+
+          # Python 3.7
+          - python-version: 3.7
+            conda-version: 4.3
+          - python-version: 3.7
+            conda-version: 4.4
+
+          # Python 3.8
+          - python-version: 3.8
+            conda-version: 4.3
+          - python-version: 3.8
+            conda-version: 4.4
+          - python-version: 3.8
+            conda-version: 4.5
+          - python-version: 3.8
+            conda-version: 4.6
+          - python-version: 3.8
+            conda-version: 4.7
     steps:
       - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v1
-        with:
-          miniconda-version: ${{ matrix.miniconda-version }}
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: true
+      - name: Download conda standalone
+        shell: bash
+        run: |
+          if [ $RUNNER_OS == 'Linux' ]; then
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
+          elif [ $RUNNER_OS == 'Windows' ]; then
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
+          elif [ $RUNNER_OS == 'macOS' ]; then
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
+          fi
+          chmod +x conda.exe
+          ./conda.exe config --set auto_update_conda false
+          ./conda.exe info
+      - name: Setup miniconda 
+        shell: bash
+        run: |
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
-        shell: bash -l {0}
+        shell: bash
         run: |
-          conda env update --file etc/test-environment.yml --name base
-          conda activate base && py.test -xv
-      - name: Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./cov.xml
-          env_vars: OS,PYTHON
+          if [ $RUNNER_OS == 'Windows' ]; then
+            source $HOME/miniconda/Scripts/activate root && conda --version && py.test -xv
+          else
+            source $HOME/miniconda/bin/activate root && conda --version && py.test -xv
+          fi
+#     - name: Codecov
+#       uses: codecov/codecov-action@v1
+#       with:
+#         file: ./cov.xml
+#         env_vars: OS,PYTHON

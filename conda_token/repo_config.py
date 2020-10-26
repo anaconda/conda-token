@@ -30,6 +30,10 @@ escaped_user_rc_path = user_rc_path.replace("%", "%%")
 escaped_sys_rc_path = abspath(join(sys.prefix, '.condarc')).replace("%", "%%")
 
 
+def can_restore_free_channel():
+    return CONDA_VERSION >= version.parse('4.7.0')
+
+
 def clean_index():
     """Runs conda clean -i.
 
@@ -142,7 +146,7 @@ def configure_default_channels(condarc_system=False,
     """
     _remove_default_channels(condarc_system, condarc_env, condarc_file)
 
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         _unset_restore_free_channel(condarc_system, condarc_env, condarc_file)
 
     _set_channel(MAIN_CHANNEL, prepend=True,

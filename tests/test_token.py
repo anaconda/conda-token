@@ -1,8 +1,12 @@
 import pytest
-from conda.gateways.connection.session import CondaHttpAuth, CondaSession
 from requests import HTTPError
 
 from conda_token.repo_config import token_list
+
+try:
+    from conda.gateways.connection.session import CondaHttpAuth, CondaSession
+except ImportError:
+    from conda.connection import CondaHttpAuth, CondaSession
 
 
 def test_add_token(set_dummy_token):

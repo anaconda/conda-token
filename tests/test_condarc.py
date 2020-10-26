@@ -1,11 +1,10 @@
 from contextlib import contextmanager
-from packaging import version
 from tempfile import NamedTemporaryFile
 
 from conda.base.context import reset_context
 from conda.gateways.disk.delete import rm_rf
 
-from conda_token.repo_config import configure_default_channels, CONDA_VERSION
+from conda_token.repo_config import configure_default_channels, can_restore_free_channel
 
 
 @contextmanager
@@ -36,7 +35,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(empty_condarc) as rc:
@@ -57,7 +56,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(original_condarc) as rc:
@@ -82,7 +81,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(original_condarc) as rc:
@@ -102,7 +101,7 @@ default_channels:
   - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(empty_condarc) as rc:
@@ -111,7 +110,7 @@ default_channels:
 
 
 def test_default_channels_with_conda_forge():
-    if not (CONDA_VERSION < version.parse('4.7')):
+    if can_restore_free_channel():
         original_condarc = """\
 ssl_verify: true
 restore_free_channel: true
