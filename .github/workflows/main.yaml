@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate.bat root && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && py.test -xv
           else
             source $HOME/miniconda/bin/activate root && py.test -xv
           fi
