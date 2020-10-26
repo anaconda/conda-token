@@ -70,9 +70,13 @@ jobs:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash
         run: |
-          source $HOME/miniconda/bin/activate root && py.test -xv
-      - name: Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./cov.xml
-          env_vars: OS,PYTHON
+          if [ $RUNNER_OS == 'Windows' ]; then
+            source $HOME/miniconda/Scripts/activate.bat root && py.test -xv
+          else
+            source $HOME/miniconda/bin/activate root && py.test -xv
+          fi
+#     - name: Codecov
+#       uses: codecov/codecov-action@v1
+#       with:
+#         file: ./cov.xml
+#         env_vars: OS,PYTHON
