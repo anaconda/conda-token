@@ -15,11 +15,22 @@ def test_token_set_invalid_channel(remove_token):
         cli.cli(['set', 'secret', '--include-archive-channels', 'nope'])
 
 
-def test_token_set(remove_token, capsys):
-    cli.cli(['set', 'SECRET'])
+def test_token_set(remove_token, secret_token, capsys):
+    cli.cli(['set', secret_token])
 
     ret = cli.cli(['list'])
     assert ret == 0
     captured = capsys.readouterr()
-    assert captured.out == 'https://repo.anaconda.cloud/repo/ SECRET\n'
+    assert captured.out == 'https://repo.anaconda.cloud/repo/ %s\n' % secret_token
 
+
+def test_token_set_error(remove_token, capsys):
+    ret = cli.cli(['set', 'SECRET'])
+    assert ret == 1
+    captured = capsys.readouterr()
+    assert captured.err == 'The token could not be validated. Please check that you have typed it correctly.\n'
+
+    ret = cli.cli(['list'])
+    assert ret == 1
+    captured = capsys.readouterr()
+    assert captured.err == 'No tokens have been configured for https://repo.anaconda.cloud/repo/\n'

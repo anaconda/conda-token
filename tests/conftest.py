@@ -3,11 +3,12 @@ import pytest
 
 from conda.cli.python_api import Commands, run_command
 
-from conda_token.repo_config import token_remove, token_set
+from conda_token.repo_config import token_remove, token_set, clean_index
 
 
 @pytest.fixture(scope='session', autouse=True)
 def reset_channels_alias():
+    clean_index()
     run_command(Commands.CONFIG, '--remove-key', 'channels', use_exception_handler=True)
     run_command(Commands.CONFIG, '--prepend', 'channels', 'defaults', use_exception_handler=True)
     run_command(Commands.CONFIG, '--set', 'channel_alias', 'https://conda.anaconda.org', use_exception_handler=True)

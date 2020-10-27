@@ -10,7 +10,7 @@ Conda token
 Set your token and configure ``default_channels`` to access Anaconda Commercial Edition. Follow the steps below
 to use ``conda-token`` to authenticate and configure your Anaconda or Miniconda install.
 
-``conda-token`` will configure your Anaconda or Miniconda instllation to authenticate to Anaconda Commercial Edition
+``conda-token`` will configure your Anaconda or Miniconda installation to authenticate to Anaconda Commercial Edition
 using the token you receive in your email after purchasing a subscription and will configure your ``default_channels``
 setting in your Conda configuration.
 

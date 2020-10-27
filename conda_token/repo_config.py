@@ -10,8 +10,15 @@ import conda
 import conda.gateways.logging  # noqa: F401
 from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
+from conda.models.channel import Channel
 from conda.gateways.anaconda_client import (read_binstar_tokens, remove_binstar_token,
                                             set_binstar_token)
+
+try:
+    from conda.gateways.connection.session import CondaSession
+except ImportError:
+    from conda.connection import CondaSession
+
 
 if sys.version_info[0] < 3:
     from urlparse import urljoin
@@ -30,6 +37,10 @@ escaped_user_rc_path = user_rc_path.replace("%", "%%")
 escaped_sys_rc_path = abspath(join(sys.prefix, '.condarc')).replace("%", "%%")
 
 
+class CondaTokenError(RuntimeError):
+    pass
+
+
 def can_restore_free_channel():
     return CONDA_VERSION >= version.parse('4.7.0')
 
@@ -42,6 +53,19 @@ def clean_index():
     repodata is correct.
     """
     run_command(Commands.CLEAN, '-i')
+
+
+def validate_token(token):
+    """Checks that token can be used with the repository."""
+
+    channel = Channel(urljoin(REPO_URL, 'main/noarch/repodata.json'))
+    channel.token = token
+    token_url = channel.url(with_credentials=True)
+
+    session = CondaSession()
+    r = session.head(token_url)
+    if r.status_code != 200:
+        raise CondaTokenError('The token could not be validated. Please check that you have typed it correctly.')
 
 
 def _set_add_anaconda_token(condarc_system=False,
