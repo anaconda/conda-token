@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import os
 import sys
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser
 
 from conda_token import __version__, repo_config
 
@@ -25,6 +25,12 @@ def token_list(args):
 
 
 def token_set(args):
+    try:
+        repo_config.validate_token(args.token)
+    except repo_config.CondaTokenError as e:
+        print(e, file=sys.stderr)
+        return 1
+
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels)
     return 0
 

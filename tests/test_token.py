@@ -1,7 +1,7 @@
 import pytest
 from requests import HTTPError
 
-from conda_token.repo_config import token_list
+from conda_token.repo_config import token_list, validate_token, CondaTokenError
 
 try:
     from conda.gateways.connection.session import CondaHttpAuth, CondaSession
@@ -33,3 +33,12 @@ def test_channeldata_200(set_secret_token):
     session = CondaSession()
     r = session.head(token_url)
     assert r.status_code == 200
+
+
+def test_validate_token_error():
+    with pytest.raises(CondaTokenError):
+        validate_token('SECRET')
+
+
+def test_validate_token_works(secret_token):
+    assert validate_token(secret_token) is None
