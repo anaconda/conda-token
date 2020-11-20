@@ -20,7 +20,6 @@ jobs:
           activate-environment: build-conda-token
           environment-file: etc/build-environment.yml
           python-version: 3.8
-          conda-version: 4.9
           auto-activate-base: false
       - name: Conda Build
         shell: bash -l {0}
