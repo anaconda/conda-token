@@ -1,5 +1,6 @@
 import pytest
 from requests import HTTPError
+from urllib3.exceptions import InsecureRequestWarning
 
 from conda_token.repo_config import token_list, validate_token, CondaTokenError
 
@@ -42,3 +43,8 @@ def test_validate_token_error():
 
 def test_validate_token_works(secret_token):
     assert validate_token(secret_token) is None
+
+
+def test_validate_token_works_no_ssl(secret_token):
+    with pytest.warns(InsecureRequestWarning):
+        assert validate_token(secret_token, ssl_verify=False) is None

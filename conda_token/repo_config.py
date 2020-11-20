@@ -55,7 +55,7 @@ def clean_index():
     run_command(Commands.CLEAN, '-i')
 
 
-def validate_token(token):
+def validate_token(token, ssl_verify=True):
     """Checks that token can be used with the repository."""
 
     channel = Channel(urljoin(REPO_URL, 'main/noarch/repodata.json'))
@@ -63,7 +63,7 @@ def validate_token(token):
     token_url = channel.url(with_credentials=True)
 
     session = CondaSession()
-    r = session.head(token_url)
+    r = session.head(token_url, verify=ssl_verify)
     if r.status_code != 200:
         raise CondaTokenError('The token could not be validated. Please check that you have typed it correctly.')
 
@@ -77,6 +77,26 @@ def _set_add_anaconda_token(condarc_system=False,
     is used when making requests to the repository.
     """
     config_args = ['--set', 'add_anaconda_token', 'true']
+
+    if condarc_system:
+        config_args.append('--system')
+    elif condarc_env:
+        config_args.append('--env')
+    elif condarc_file:
+        config_args.append('--file={}'.format(condarc_file))
+
+    run_command(Commands.CONFIG, *config_args)
+
+
+def _set_ssl_verify_false(condarc_system=False,
+                          condarc_env=False,
+                          condarc_file=None):
+    """Run conda config --set ssl_verify false.
+
+    Setting this parameter to false disables all
+    SSL verification for conda activities
+    """
+    config_args = ['--set', 'ssl_verify', 'false']
 
     if condarc_system:
         config_args.append('--system')
@@ -218,7 +238,8 @@ def token_set(token,
               system=False,
               env=False,
               file=None,
-              include_archive_channels=None):
+              include_archive_channels=None,
+              ssl_verify=True):
     """Set the Commercial Edition token and configure default_channels.
 
 
@@ -232,6 +253,8 @@ def token_set(token,
 
     set_binstar_token(REPO_URL, token)
     _set_add_anaconda_token(system, env, file)
+    if not ssl_verify:
+        _set_ssl_verify_false(system, env, file)
 
     configure_default_channels(system, env, file, include_archive_channels)
     clean_index()
