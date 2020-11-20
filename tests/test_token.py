@@ -1,5 +1,6 @@
 import pytest
 from requests import HTTPError
+from urllib3.exceptions import InsecureRequestWarning
 
 from conda_token.repo_config import token_list, validate_token, CondaTokenError
 
