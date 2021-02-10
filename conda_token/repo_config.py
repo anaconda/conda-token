@@ -30,7 +30,7 @@ CONDA_VERSION = version.parse(conda.__version__)
 REPO_URL = 'https://repo.anaconda.cloud/repo/'
 MAIN_CHANNEL = 'main'
 ACTIVE_CHANNELS = ['r', 'msys2']
-ARCHIVE_CHANNELS = ['free', 'mro', 'mro-archive', 'pro']
+ARCHIVE_CHANNELS = ['free', 'mro-archive', 'pro']
 
 user_rc_path = abspath(expanduser('~/.condarc'))
 escaped_user_rc_path = user_rc_path.replace("%", "%%")
