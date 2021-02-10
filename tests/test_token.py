@@ -1,7 +1,6 @@
 import pytest
-from conda.base.context import context
 from conda.cli.python_api import Commands, run_command
-from conda_token.repo_config import CondaTokenError, token_list, validate_token
+from conda_token.repo_config import CondaTokenError, get_ssl_verify, token_list, validate_token
 from requests import HTTPError
 
 try:
@@ -47,5 +46,4 @@ def test_validate_token_works(secret_token):
 
 def test_conda_context():
     run_command(Commands.CONFIG, '--set', 'ssl_verify', 'false', use_exception_handler=True)
-    context.__init__()
-    assert not context.ssl_verify
+    assert not get_ssl_verify()

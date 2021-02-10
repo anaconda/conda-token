@@ -42,6 +42,12 @@ def can_restore_free_channel():
     return CONDA_VERSION >= version.parse('4.7.0')
 
 
+def get_ssl_verify():
+    if CONDA_VERSION >= version.parse('4.4.0'):
+        context.__init__()
+    return context.ssl_verify
+
+
 def clean_index():
     """Runs conda clean -i.
 
@@ -56,9 +62,7 @@ def validate_token(token, no_ssl_verify=False):
     """Checks that token can be used with the repository."""
 
     # Read ssl_verify from condarc
-    if CONDA_VERSION >= version.parse('4.4.0'):
-        context.__init__()
-    ssl_verify = context.ssl_verify
+    ssl_verify = get_ssl_verify()
 
     # Force ssl_verify: false
     if no_ssl_verify:
