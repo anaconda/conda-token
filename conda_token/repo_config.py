@@ -2,23 +2,20 @@
 Configure Conda to use Anaconda Commercial Edition.
 """
 
-from os.path import abspath, expanduser, join
-from packaging import version
 import sys
+from os.path import abspath, expanduser, join
 
 import conda
 import conda.gateways.logging  # noqa: F401
+import requests
+from conda.base.context import context
 from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
-from conda.models.channel import Channel
-from conda.gateways.anaconda_client import (read_binstar_tokens, remove_binstar_token,
+from conda.gateways.anaconda_client import (read_binstar_tokens,
+                                            remove_binstar_token,
                                             set_binstar_token)
-
-try:
-    from conda.gateways.connection.session import CondaSession
-except ImportError:
-    from conda.connection import CondaSession
-
+from conda.models.channel import Channel
+from packaging import version
 
 if sys.version_info[0] < 3:
     from urlparse import urljoin
@@ -55,15 +52,22 @@ def clean_index():
     run_command(Commands.CLEAN, '-i')
 
 
-def validate_token(token, ssl_verify=True):
+def validate_token(token, no_ssl_verify=False):
     """Checks that token can be used with the repository."""
+
+    # Read ssl_verify from condarc
+    context.__init__()
+    ssl_verify = context.ssl_verify
+
+    # Force ssl_verify: false
+    if no_ssl_verify:
+        ssl_verify = False
 
     channel = Channel(urljoin(REPO_URL, 'main/noarch/repodata.json'))
     channel.token = token
     token_url = channel.url(with_credentials=True)
 
-    session = CondaSession()
-    r = session.head(token_url, verify=ssl_verify)
+    r = requests.head(token_url, verify=ssl_verify)
     if r.status_code != 200:
         raise CondaTokenError('The token could not be validated. Please check that you have typed it correctly.')
 
@@ -239,7 +243,7 @@ def token_set(token,
               env=False,
               file=None,
               include_archive_channels=None,
-              ssl_verify=True):
+              no_ssl_verify=False):
     """Set the Commercial Edition token and configure default_channels.
 
 
@@ -253,7 +257,8 @@ def token_set(token,
 
     set_binstar_token(REPO_URL, token)
     _set_add_anaconda_token(system, env, file)
-    if not ssl_verify:
+
+    if no_ssl_verify:
         _set_ssl_verify_false(system, env, file)
 
     configure_default_channels(system, env, file, include_archive_channels)

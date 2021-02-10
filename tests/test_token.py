@@ -1,7 +1,8 @@
 import pytest
+from conda.base.context import context
+from conda.cli.python_api import Commands, run_command
+from conda_token.repo_config import CondaTokenError, token_list, validate_token
 from requests import HTTPError
-
-from conda_token.repo_config import token_list, validate_token, CondaTokenError
 
 try:
     from conda.gateways.connection.session import CondaHttpAuth, CondaSession
@@ -42,3 +43,9 @@ def test_validate_token_error():
 
 def test_validate_token_works(secret_token):
     assert validate_token(secret_token) is None
+
+
+def test_conda_context():
+    run_command(Commands.CONFIG, '--set', 'ssl_verify', 'false', use_exception_handler=True)
+    context.__init__()
+    assert not context.ssl_verify

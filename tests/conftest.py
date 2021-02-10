@@ -1,9 +1,13 @@
 import os
+import warnings
+
 import pytest
-
 from conda.cli.python_api import Commands, run_command
+from conda_token.repo_config import clean_index, token_remove, token_set
 
-from conda_token.repo_config import token_remove, token_set, clean_index
+
+def pytest_configure(config):
+    warnings.filterwarnings('always')
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -12,6 +16,13 @@ def reset_channels_alias():
     run_command(Commands.CONFIG, '--remove-key', 'channels', use_exception_handler=True)
     run_command(Commands.CONFIG, '--prepend', 'channels', 'defaults', use_exception_handler=True)
     run_command(Commands.CONFIG, '--set', 'channel_alias', 'https://conda.anaconda.org', use_exception_handler=True)
+
+
+@pytest.fixture(scope='function', autouse=True)
+def set_ssl_verify_true():
+    run_command(Commands.CONFIG, '--set', 'ssl_verify', 'true', use_exception_handler=True)
+    yield
+    run_command(Commands.CONFIG, '--set', 'ssl_verify', 'true', use_exception_handler=True)
 
 
 @pytest.fixture(scope='function')

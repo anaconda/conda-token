@@ -3,8 +3,9 @@ from tempfile import NamedTemporaryFile
 
 from conda.base.context import reset_context
 from conda.gateways.disk.delete import rm_rf
-
-from conda_token.repo_config import configure_default_channels, can_restore_free_channel
+from conda_token.repo_config import (_set_ssl_verify_false,
+                                     can_restore_free_channel,
+                                     configure_default_channels)
 
 
 @contextmanager
@@ -78,14 +79,13 @@ default_channels:
   - https://repo.anaconda.cloud/repo/msys2
   - https://repo.anaconda.cloud/repo/free
   - https://repo.anaconda.cloud/repo/pro
-  - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
     if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(original_condarc) as rc:
-        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
+        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro-archive'])
         assert _read_test_condarc(rc) == final_condarc
 
 
@@ -98,14 +98,13 @@ default_channels:
   - https://repo.anaconda.cloud/repo/msys2
   - https://repo.anaconda.cloud/repo/free
   - https://repo.anaconda.cloud/repo/pro
-  - https://repo.anaconda.cloud/repo/mro
   - https://repo.anaconda.cloud/repo/mro-archive
 """
     if can_restore_free_channel():
         final_condarc = 'restore_free_channel: false\n' + final_condarc
 
     with make_temp_condarc(empty_condarc) as rc:
-        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro', 'mro-archive'])
+        configure_default_channels(condarc_file=rc, include_archive_channels=['free', 'pro', 'mro-archive'])
         assert _read_test_condarc(rc) == final_condarc
 
 
@@ -168,3 +167,40 @@ default_channels:
   - https://repo.anaconda.cloud/repo/r
   - https://repo.anaconda.cloud/repo/msys2
 """
+
+
+def test_no_ssl_verify_from_true():
+    original_condarc = """
+ssl_verify: true
+"""
+    final_condarc = """\
+ssl_verify: false
+"""
+
+    with make_temp_condarc(original_condarc) as rc:
+        _set_ssl_verify_false(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc
+
+
+def test_no_ssl_verify_from_empty():
+    original_condarc = "\n"
+    final_condarc = """\
+ssl_verify: false
+"""
+
+    with make_temp_condarc(original_condarc) as rc:
+        _set_ssl_verify_false(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc
+
+
+def test_no_ssl_verify_from_false():
+    original_condarc = """
+ssl_verify: false
+"""
+    final_condarc = """\
+ssl_verify: false
+"""
+
+    with make_temp_condarc(original_condarc) as rc:
+        _set_ssl_verify_false(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc

@@ -8,7 +8,7 @@ import os
 import sys
 from argparse import ArgumentParser
 
-from conda_token import __version__, repo_config
+from . import __version__, repo_config
 
 
 def token_list(args):
@@ -26,13 +26,13 @@ def token_list(args):
 
 def token_set(args):
     try:
-        repo_config.validate_token(args.token, ssl_verify=not args.no_ssl_verify)
+        repo_config.validate_token(args.token, no_ssl_verify=args.no_ssl_verify)
     except repo_config.CondaTokenError as e:
         print(e, file=sys.stderr)
         return 1
 
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels,
-                          not args.no_ssl_verify)
+                          args.no_ssl_verify)
     return 0
 
 
@@ -96,9 +96,11 @@ def cli(argv=None):
                    help='Add archived channels to default_channels. '
                         '\nAvailable channels are mro, mro-archive, free, and pro.',
                      nargs='+', default=None, metavar='CHANNEL_NAME')
-    subparser_set.add_argument('--no-ssl-verify', help='Disable SSL verification. '
-                                                       'This will add ssl_verify: false to your'
-                                                       '.condarc file.',
+    subparser_set.add_argument('--no-ssl-verify', help='Force disabling SSL verification. '
+                                                       'By default conda-token will respect your'
+                                                       'ssl_verify flag in your Conda settings.'
+                                                       'Using this flag will add ssl_verify: false'
+                                                       'to your .condarc file. If not already set.',
                                 action='store_true'
                                )
     condarc_path_args(subparser_set)

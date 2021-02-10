@@ -1,6 +1,18 @@
-import pytest
+import warnings
 
+import pytest
+import urllib3.exceptions
 from conda_token import cli
+
+
+def test_token_set_no_verify_ssl(remove_token, secret_token, capsys):
+    with pytest.warns(urllib3.exceptions.InsecureRequestWarning):
+        cli.cli(['set', '--no-ssl-verify', secret_token])
+
+    ret = cli.cli(['list'])
+    assert ret == 0
+    captured = capsys.readouterr()
+    assert captured.out == 'https://repo.anaconda.cloud/repo/ %s\n' % secret_token
 
 
 def test_token_list(remove_token, capsys):
