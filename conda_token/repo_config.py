@@ -8,6 +8,7 @@ from os.path import abspath, expanduser, join
 import conda
 import conda.gateways.logging  # noqa: F401
 import requests
+from conda.base.context import reset_context
 from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
 from conda.gateways.anaconda_client import (read_binstar_tokens,
@@ -42,12 +43,7 @@ def can_restore_free_channel():
 
 
 def get_ssl_verify():
-    if CONDA_VERSION >= version.parse('4.4.0'):
-        from conda.base.context import context
-        context.__init__()
-    else:
-        from conda.base.context import reset_context
-        context = reset_context()
+    context = reset_context()
     return context.ssl_verify
 
 
