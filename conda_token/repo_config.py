@@ -56,7 +56,8 @@ def validate_token(token, no_ssl_verify=False):
     """Checks that token can be used with the repository."""
 
     # Read ssl_verify from condarc
-    context.__init__()
+    if CONDA_VERSION >= version.parse('4.4.0'):
+        context.__init__()
     ssl_verify = context.ssl_verify
 
     # Force ssl_verify: false
