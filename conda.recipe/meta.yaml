@@ -20,7 +20,7 @@ build:
     {% for entry in data['entry_points']['console_scripts'] %}
       - {{ entry.split('=')[0].strip() }} = {{ entry.split('=')[1].strip() }}
     {% endfor %}
-  
+ 
 
 requirements:
   # if you need compilers, uncomment these

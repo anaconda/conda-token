@@ -3,7 +3,8 @@ import versioneer
 
 requirements = [
     'conda>=4.3',
-    'packaging'
+    'packaging',
+    'conda-content-trust'
 ]
 
 setup(
