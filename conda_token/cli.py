@@ -103,8 +103,8 @@ def cli(argv=None):
                                                        'to your .condarc file. If not already set.',
                                 action='store_true'
                                )
-    subparser_set.add_argument('--enable-package-signing', action='store_true',
-                               help='Enable Conda package signing. Default is off.')
+    subparser_set.add_argument('--enable-signature-verification', action='store_true',
+                               help='Enable Conda package signature verification. Default is off.')
     condarc_path_args(subparser_set)
     subparser_set.set_defaults(func=token_set)
 

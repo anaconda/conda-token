@@ -84,7 +84,7 @@ def enable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_
     """
     if CONDA_VERSION < version.parse('4.10.1'):
         print('Warning: You need upgrade to at least Conda version 4.10.1 '
-              'to enable package signing.')
+              'to enable package signature verification.')
         return
 
     condarc_file_args = []
