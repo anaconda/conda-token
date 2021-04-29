@@ -33,6 +33,7 @@ def token_set(args):
 
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels,
                           args.no_ssl_verify, args.enable_signature_verification)
+    print('Success! Your token was validated and Conda has been configured.')
     return 0
 
 
