@@ -14,7 +14,7 @@ def test_token_set_no_verify_ssl(remove_token, secret_token, capsys):
     ret = cli.cli(['list'])
     assert ret == 0
     captured = capsys.readouterr()
-    assert captured.out == 'https://repo.anaconda.cloud/repo/ %s\n' % secret_token
+    assert captured.out.splitlines()[-1] == 'https://repo.anaconda.cloud/repo/ %s' % secret_token
 
 
 def test_token_list(remove_token, capsys):
@@ -35,7 +35,8 @@ def test_token_set(remove_token, secret_token, capsys):
     ret = cli.cli(['list'])
     assert ret == 0
     captured = capsys.readouterr()
-    assert captured.out == 'https://repo.anaconda.cloud/repo/ %s\n' % secret_token
+    assert captured.out == """Success! Your token was validated and Conda has been configured.
+https://repo.anaconda.cloud/repo/ %s\n""" % secret_token
 
 
 def test_token_set_error(remove_token, capsys):
