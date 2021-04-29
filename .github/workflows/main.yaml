@@ -93,7 +93,7 @@ jobs:
       - name: Setup miniconda 
         shell: bash
         run: |
-          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
