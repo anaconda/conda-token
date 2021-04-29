@@ -82,6 +82,10 @@ def enable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_
     This will set extra_safety_checks: True and
     signing_metadata_url_base in the CondaRC file.
     """
+    if CONDA_VERSION < version.parse('4.10.1'):
+        print('Warning: You need upgrade to at least Conda version 4.10.1 '
+              'to enable package signing.')
+        return
 
     condarc_file_args = []
     if condarc_system:
@@ -98,8 +102,6 @@ def enable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_
     metadata_url_args = ['--set', 'signing_metadata_url_base', REPO_URL.rstrip('/')]
     metadata_url_args.extend(condarc_file_args)
     run_command(Commands.CONFIG, *metadata_url_args)
-    if CONDA_VERSION < version.parse('4.10.1'):
-        print('Warning: You need upgrade to at least Conda version 4.10.1.')
 
 
 def disable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_file=None):
