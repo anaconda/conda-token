@@ -32,7 +32,7 @@ def token_set(args):
         return 1
 
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels,
-                          args.no_ssl_verify)
+                          args.no_ssl_verify, args.enable_package_signing)
     return 0
 
 
@@ -93,16 +93,18 @@ def cli(argv=None):
     subparser_set = subparser.add_parser('set', help='Set your token and configure default_channels.')
     subparser_set.add_argument('token', help='Your token.')
     subparser_set.add_argument('--include-archive-channels', choices=repo_config.ARCHIVE_CHANNELS,
-                   help='Add archived channels to default_channels. '
-                        '\nAvailable channels are mro, mro-archive, free, and pro.',
-                     nargs='+', default=None, metavar='CHANNEL_NAME')
+                                help='Add archived channels to default_channels. '
+                                    '\nAvailable channels are mro, mro-archive, free, and pro.',
+                                nargs='+', default=None, metavar='CHANNEL_NAME')
     subparser_set.add_argument('--no-ssl-verify', help='Force disabling SSL verification. '
-                                                       'By default conda-token will respect your'
-                                                       'ssl_verify flag in your Conda settings.'
-                                                       'Using this flag will add ssl_verify: false'
+                                                       'By default conda-token will respect your '
+                                                       'ssl_verify flag in your Conda settings. '
+                                                       'Using this flag will add ssl_verify: false '
                                                        'to your .condarc file. If not already set.',
                                 action='store_true'
                                )
+    subparser_set.add_argument('--enable-package-signing', action='store_true',
+                               help='Enable Conda package signing. Default is off.')
     condarc_path_args(subparser_set)
     subparser_set.set_defaults(func=token_set)
 
