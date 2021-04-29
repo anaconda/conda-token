@@ -1,9 +1,21 @@
+import pytest
 import json
 
 from packaging.version import parse
 
 from conda.cli.python_api import Commands, run_command
 from conda_token.repo_config import CONDA_VERSION
+
+
+@pytest.mark.skipif(CONDA_VERSION < parse('4.10.1'), reason='Signature verification was added in Conda 4.10.1')
+def test_conda_search_rope_signed(set_secret_token_with_signing):
+    stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'rope=0.18.0=py_0', '--json')
+    rope = json.loads(stdout)['rope'][0]
+    assert rope['metadata_signature_status'] == 0
+
+    stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'conda-forge::rope=0.18.0=pyhd3deb0d_0', '--json')
+    rope = json.loads(stdout)['rope'][0]
+    assert rope['metadata_signature_status'] == -1
 
 
 def test_conda_search_rope(set_secret_token):

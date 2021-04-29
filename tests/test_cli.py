@@ -3,6 +3,8 @@ import warnings
 import pytest
 import urllib3.exceptions
 from conda_token import cli
+from conda_token.repo_config import CONDA_VERSION, CondaVersionWarning
+from packaging.version import parse
 
 
 def test_token_set_no_verify_ssl(remove_token, secret_token, capsys):
@@ -46,3 +48,10 @@ def test_token_set_error(remove_token, capsys):
     assert ret == 1
     captured = capsys.readouterr()
     assert captured.err == 'No tokens have been configured for https://repo.anaconda.cloud/repo/\n'
+
+
+@pytest.mark.skipif(CONDA_VERSION >= parse('4.10.1'), reason='Signature verification will warn on old versions')
+def test_token_set_with_signing_warn(remove_token, secret_token, capsys):
+    with pytest.warns(CondaVersionWarning):
+        ret = cli.cli(['set', '--enable-signature-verification', secret_token])
+        assert ret == 0

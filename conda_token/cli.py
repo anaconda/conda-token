@@ -32,7 +32,7 @@ def token_set(args):
         return 1
 
     repo_config.token_set(args.token, args.system, args.env, args.file, args.include_archive_channels,
-                          args.no_ssl_verify, args.enable_package_signing)
+                          args.no_ssl_verify, args.enable_signature_verification)
     return 0
 
 

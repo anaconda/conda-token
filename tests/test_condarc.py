@@ -1,11 +1,14 @@
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
+import pytest
 from conda.base.context import reset_context
 from conda.gateways.disk.delete import rm_rf
-from conda_token.repo_config import (_set_ssl_verify_false,
+from conda_token.repo_config import (CONDA_VERSION, _set_ssl_verify_false,
                                      can_restore_free_channel,
-                                     configure_default_channels)
+                                     configure_default_channels,
+                                     enable_extra_safety_checks)
+from packaging.version import parse
 
 
 @contextmanager
@@ -203,4 +206,17 @@ ssl_verify: false
 
     with make_temp_condarc(original_condarc) as rc:
         _set_ssl_verify_false(condarc_file=rc)
+        assert _read_test_condarc(rc) == final_condarc
+
+
+@pytest.mark.skipif(CONDA_VERSION < parse('4.10.1'), reason='Signature verification was added in Conda 4.10.1')
+def test_enable_package_signing():
+    empty_condarc = ''
+
+    final_condarc = """extra_safety_checks: true
+signing_metadata_url_base: https://repo.anaconda.cloud/repo
+"""
+
+    with make_temp_condarc(empty_condarc) as rc:
+        enable_extra_safety_checks(condarc_file=rc)
         assert _read_test_condarc(rc) == final_condarc

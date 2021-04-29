@@ -3,6 +3,7 @@ Configure Conda to use Anaconda Commercial Edition.
 """
 
 import sys
+import warnings
 from os.path import abspath, expanduser, join
 
 import conda
@@ -35,6 +36,10 @@ escaped_sys_rc_path = abspath(join(sys.prefix, '.condarc')).replace("%", "%%")
 
 
 class CondaTokenError(RuntimeError):
+    pass
+
+
+class CondaVersionWarning(UserWarning):
     pass
 
 
@@ -77,14 +82,14 @@ def validate_token(token, no_ssl_verify=False):
 
 
 def enable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_file=None):
-    """Enable package signing.
+    """Enable package signature verification.
 
     This will set extra_safety_checks: True and
     signing_metadata_url_base in the CondaRC file.
     """
     if CONDA_VERSION < version.parse('4.10.1'):
-        print('Warning: You need upgrade to at least Conda version 4.10.1 '
-              'to enable package signature verification.')
+        warnings.warn('You need upgrade to at least Conda version 4.10.1 to enable package signature verification.',
+                       CondaVersionWarning)
         return
 
     condarc_file_args = []
@@ -105,7 +110,7 @@ def enable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_
 
 
 def disable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc_file=None):
-    """Disable package signing.
+    """Disable package signature verification.
 
     This will set extra_safety_checks: false and remove
     signing_metadata_url_base in the CondaRC file.
@@ -296,7 +301,7 @@ def token_remove(system=False,
     This function performs three actions.
     1. Remove the token
     2. Remove the custom default_channels in the condarc
-    3. Disable package signing
+    3. Disable package signature verification
     4. Run conda clean -i
     """
     remove_binstar_token(REPO_URL)
@@ -311,7 +316,7 @@ def token_set(token,
               file=None,
               include_archive_channels=None,
               no_ssl_verify=False,
-              enable_package_signing=False):
+              enable_signature_verification=False):
     """Set the Commercial Edition token and configure default_channels.
 
 
@@ -319,7 +324,7 @@ def token_set(token,
     1. Remove previous Commercial Edition token if present.
     2. Add token.
     3. Configure default_channels in the condarc file.
-    4. Optionally enable Conda package signing
+    4. Optionally enable Conda package signature verification
     5. Run conda clean -i
     """
     remove_binstar_token(REPO_URL)
@@ -330,7 +335,7 @@ def token_set(token,
     if no_ssl_verify:
         _set_ssl_verify_false(system, env, file)
 
-    if enable_package_signing:
+    if enable_signature_verification:
         enable_extra_safety_checks(system, env, file)
 
     configure_default_channels(system, env, file, include_archive_channels)
