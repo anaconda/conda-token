@@ -111,6 +111,9 @@ def disable_extra_safety_checks(condarc_system=False, condarc_env=False, condarc
     signing_metadata_url_base in the CondaRC file.
     """
 
+    if CONDA_VERSION < version.parse('4.10.1'):
+        return
+
     condarc_file_args = []
     if condarc_system:
         condarc_file_args.append('--system')
