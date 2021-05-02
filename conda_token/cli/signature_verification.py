@@ -11,7 +11,7 @@ from .utils import condarc_path_args
 
 def main(args):
     if repo_config.CONDA_VERSION < version.parse('4.10.1'):
-        print('You must first upgrade to at least Conda version 4.10.1.')
+        print('You must first upgrade to at least Conda version 4.10.1.', file=sys.stderr)
         return 1
 
     if args.enable and args.disable:
@@ -20,7 +20,7 @@ def main(args):
     if args.enable:
         tokens = repo_config.token_list()
         if repo_config.REPO_URL not in tokens:
-            print("You must first activate your subscription with 'conda token set <TOKEN>'")
+            print("You must first activate your subscription with 'conda token set <TOKEN>'", file=sys.stderr)
             return 1
         else:
             repo_config.enable_extra_safety_checks(args.system, args.env, args.file)
