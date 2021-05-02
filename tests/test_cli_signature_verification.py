@@ -27,6 +27,6 @@ def test_enable_verification_after_token(remove_token, secret_token, capsys):
 def test_enable_verification_fail_old_conda(remove_token, capsys):
     ret = signature_verification.cli(['--enable'])
 
-    assert ret == 0
+    assert ret == 1
     captured = capsys.readouterr()
     assert captured.err == 'You must first upgrade to at least Conda version 4.10.1.\n'
