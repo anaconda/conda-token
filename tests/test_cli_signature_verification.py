@@ -4,6 +4,7 @@ from conda_token.repo_config import CONDA_VERSION, CondaVersionWarning
 from packaging.version import parse
 
 
+@pytest.mark.skipif(CONDA_VERSION < parse('4.10.1'), reason='Signature verification introduced in 4.10.1')
 def test_enable_verification_without_token(remove_token, capsys):
     ret = signature_verification.cli(['--enable'])
 
@@ -12,6 +13,7 @@ def test_enable_verification_without_token(remove_token, capsys):
     assert captured.err == "You must first activate your subscription with 'conda token set <TOKEN>'\n"
 
 
+@pytest.mark.skipif(CONDA_VERSION < parse('4.10.1'), reason='Signature verification introduced in 4.10.1')
 def test_enable_verification_after_token(remove_token, secret_token, capsys):
     token.cli(['set', secret_token])
     ret = signature_verification.cli(['--enable'])
