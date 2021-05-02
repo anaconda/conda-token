@@ -45,7 +45,7 @@ def cli(argv=None):
         version="conda-signature-verification %s" % __version__,
     )
 
-    group = parser.add_mutually_exclusive_group()
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--enable', action='store_true', help='Enable Conda package signature verification.')
     group.add_argument('--disable', action='store_true', help='Disable Conda package signature verification.')
 
