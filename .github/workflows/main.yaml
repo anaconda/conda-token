@@ -34,13 +34,15 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
-        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9]
+        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, "4.10"]
         exclude:
           # Python 2.7
           - python-version: 2.7
             conda-version: 4.8
           - python-version: 2.7
             conda-version: 4.9
+          - python-version: 2.7
+            conda-version: "4.10"
 
           # Python 3.5
           - python-version: 3.5
@@ -53,6 +55,8 @@ jobs:
             conda-version: 4.8
           - python-version: 3.5
             conda-version: 4.9
+          - python-version: 3.5
+            conda-version: "4.10"
 
           # Python 3.7
           - python-version: 3.7
@@ -89,7 +93,7 @@ jobs:
       - name: Setup miniconda 
         shell: bash
         run: |
-          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}

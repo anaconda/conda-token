@@ -50,6 +50,15 @@ def set_secret_token():
 
 
 @pytest.fixture(scope='function')
+def set_secret_token_with_signing():
+    token_remove()
+    secret_token = os.environ.get('CE_TOKEN', '')
+    token_set(secret_token, enable_signature_verification=True)
+    yield
+    token_remove()
+
+
+@pytest.fixture(scope='function')
 def secret_token():
     token = os.environ.get('CE_TOKEN', '')
     yield token
