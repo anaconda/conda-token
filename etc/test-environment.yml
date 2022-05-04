@@ -1,6 +1,8 @@
 channels:
   - defaults
 dependencies:
+  - packaging
+  - conda-content-trust
   - pytest
   - pytest-cov
   - requests
