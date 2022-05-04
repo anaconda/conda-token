@@ -2,6 +2,7 @@
 Configure Conda to use Anaconda Commercial Edition.
 """
 
+import os
 import sys
 import warnings
 from os.path import abspath, expanduser, join
@@ -25,7 +26,7 @@ else:
 
 CONDA_VERSION = version.parse(conda.__version__)
 
-REPO_URL = 'https://repo.anaconda.cloud/repo/'
+REPO_URL = os.getenv('CONDA_TOKEN_REPO_URL', 'https://repo.anaconda.cloud/repo/')
 MAIN_CHANNEL = 'main'
 ACTIVE_CHANNELS = ['r', 'msys2']
 ARCHIVE_CHANNELS = ['free', 'mro-archive', 'pro']
