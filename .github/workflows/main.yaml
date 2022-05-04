@@ -65,6 +65,16 @@ jobs:
             conda-version: "4.11"
           - python-version: 3.5
             conda-version: "4.12"
+          
+          # Python 3.6
+          - python-version: 3.6
+            conda-version: 4.9
+          - python-version: 3.6
+            conda-version: "4.10"
+          - python-version: 3.6
+            conda-version: "4.11"
+          - python-version: 3.6
+            conda-version: "4.12"
 
           # Python 3.7
           - python-version: 3.7
