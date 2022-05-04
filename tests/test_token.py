@@ -26,7 +26,7 @@ def test_channeldata_403(remove_token):
     assert r.status_code == 403
 
 
-def test_channeldata_200(set_secret_token):
+def test_repodata_200(set_secret_token):
     repodata_url = 'https://repo.anaconda.cloud/repo/main/osx-64/repodata.json'
     token_url = CondaHttpAuth.add_binstar_token(repodata_url)
 
