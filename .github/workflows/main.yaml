@@ -143,16 +143,16 @@ jobs:
       - name: Setup miniconda 
         shell: bash
         run: |
-          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} 
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && conda env update -f etc/test-environment.yml -n root && conda --version && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda --version && py.test -xv
           else
-            source $HOME/miniconda/bin/activate root && conda env update -f etc/test-environment.yml -n root && conda --version && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda --version && py.test -xv
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1
