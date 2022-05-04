@@ -140,9 +140,9 @@ jobs:
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && conda env update -f etc/test-environment.yml -n root -y && conda --version && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda env update -f etc/test-environment.yml -n root && conda --version && py.test -xv
           else
-            source $HOME/miniconda/bin/activate root && conda env update -f etc/test-environment.yml -n root -y && conda --version && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda env update -f etc/test-environment.yml -n root && conda --version && py.test -xv
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1
