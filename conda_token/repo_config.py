@@ -9,8 +9,7 @@ from os.path import abspath, expanduser, join
 
 import conda
 import conda.gateways.logging  # noqa: F401
-import requests
-from conda.base.context import reset_context
+from conda.base.context import context, reset_context
 from conda.cli.python_api import Commands, run_command
 from conda.exceptions import CondaKeyError
 from conda.gateways.anaconda_client import (
@@ -18,6 +17,7 @@ from conda.gateways.anaconda_client import (
     remove_binstar_token,
     set_binstar_token,
 )
+from conda.gateways.connection.session import CondaSession
 from conda.models.channel import Channel
 from packaging import version
 
@@ -68,18 +68,21 @@ def clean_index():
 def validate_token(token, no_ssl_verify=False):
     """Checks that token can be used with the repository."""
 
-    # Read ssl_verify from condarc
-    ssl_verify = get_ssl_verify()
-
     # Force ssl_verify: false
     if no_ssl_verify:
-        ssl_verify = False
+        context.ssl_verify = False  # type: ignore
+
+    # We use CondaSession to be compatible with ssl_verify: truststore
+    # https://conda.io/projects/conda/en/latest/user-guide/configuration/settings.html#ssl-verify-ssl-verification
+    # clear metaclass cache to create new session checking ssl_verify
+    CondaSession.cache_clear()
+    session = CondaSession()
 
     channel = Channel(urljoin(REPO_URL, "main/noarch/repodata.json"))
     channel.token = token
-    token_url = channel.url(with_credentials=True)
+    token_url = str(channel.url(with_credentials=True))
 
-    r = requests.head(token_url, verify=ssl_verify)
+    r = session.head(token_url, verify=session.verify)
     if r.status_code != 200:
         raise CondaTokenError(
             "The token could not be validated. Please check that you have typed it correctly."
