@@ -17,7 +17,10 @@ from conda.gateways.anaconda_client import (
     remove_binstar_token,
     set_binstar_token,
 )
-from conda.gateways.connection.session import CondaSession
+try:
+    from conda.gateways.connection.session import CondaSession
+except ImportError:
+    from conda.connection import CondaSession
 from conda.models.channel import Channel
 from packaging import version
 
