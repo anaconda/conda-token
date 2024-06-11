@@ -72,10 +72,20 @@ def validate_token(token, no_ssl_verify=False):
     if no_ssl_verify:
         context.ssl_verify = False  # type: ignore
 
-    # We use CondaSession to be compatible with ssl_verify: truststore
+    # Use CondaSession to be compatible with ssl_verify: truststore
     # https://conda.io/projects/conda/en/latest/user-guide/configuration/settings.html#ssl-verify-ssl-verification
-    # clear metaclass cache to create new session checking ssl_verify
-    CondaSession.cache_clear()
+    # Clear metaclass cache to create new session checking ssl_verify
+    if hasattr(CondaSession, "cache_clear"):
+        # not present in conda < January 2024
+        CondaSession.cache_clear()
+    else:
+        # what cache_clear() does
+        try:
+            CondaSession._thread_local.sessions.clear()
+        except AttributeError:
+            # AttributeError: thread's session cache has not been initialized
+            pass
+
     session = CondaSession()
 
     channel = Channel(urljoin(REPO_URL, "main/noarch/repodata.json"))

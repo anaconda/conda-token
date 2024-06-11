@@ -33,8 +33,8 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, "3.10"]
-        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12"]
+        python-version: [2.7, 3.8, 3.9, "3.10", "3.12"]
+        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12", "23.9.0", "24.5.0"]
         exclude:
           # Python 2.7
           - python-version: 2.7
@@ -47,40 +47,20 @@ jobs:
             conda-version: "4.11"
           - python-version: 2.7
             conda-version: "4.12"
-
-          # Python 3.5
-          - python-version: 3.5
-            conda-version: 4.5
-          - python-version: 3.5
-            conda-version: 4.6
-          - python-version: 3.5
-            conda-version: 4.7
-          - python-version: 3.5
-            conda-version: 4.8
-          - python-version: 3.5
-            conda-version: 4.9
-          - python-version: 3.5
-            conda-version: "4.10"
-          - python-version: 3.5
-            conda-version: "4.11"
-          - python-version: 3.5
-            conda-version: "4.12"
-          
-          # Python 3.6
-          - python-version: 3.6
-            conda-version: 4.9
-          - python-version: 3.6
-            conda-version: "4.10"
-          - python-version: 3.6
-            conda-version: "4.11"
-          - python-version: 3.6
-            conda-version: "4.12"
+          - python-version: 2.7
+            conda-version: "23.9.0"
+          - python-version: 2.7
+            conda-version: "24.5.0"
 
           # Python 3.7
           - python-version: 3.7
             conda-version: 4.3
           - python-version: 3.7
             conda-version: 4.4
+          - python-version: 3.7
+            conda-version: "23.9.0"
+          - python-version: 3.7
+            conda-version: "24.5.0"
 
           # Python 3.8
           - python-version: 3.8
@@ -140,7 +120,7 @@ jobs:
           chmod +x conda.exe
           ./conda.exe config --set auto_update_conda false
           ./conda.exe info
-      - name: Setup miniconda 
+      - name: Setup miniconda
         shell: bash
         run: |
           ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust
