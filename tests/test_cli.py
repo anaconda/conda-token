@@ -1,5 +1,3 @@
-import warnings
-
 import pytest
 import urllib3.exceptions
 from conda_token import cli
