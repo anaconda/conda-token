@@ -90,7 +90,7 @@ def test_conda_install_rope(set_secret_token, uninstall_rope):
             Commands.LIST, "rope", "--show-channel-urls", "--json"
         )
         try:
-            rope = json_skip_preamble(stdout)["rope"][0]
+            rope = json_skip_preamble(stdout)[0]
         except (json.JSONDecodeError, TypeError):
             print("Could not decode", stdout)
             raise
@@ -124,7 +124,7 @@ def test_conda_install_with_conda_forge(
             Commands.LIST, "rope", "--show-channel-urls", "--json"
         )
         try:
-            rope = json_skip_preamble(stdout)["rope"][0]
+            rope = json_skip_preamble(stdout)[0]
         except json.JSONDecodeError:
             print("Could not decode", stdout)
             raise
