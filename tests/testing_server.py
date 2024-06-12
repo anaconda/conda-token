@@ -47,7 +47,6 @@ def run_server():
         "127.0.0.1", 0, app, handler_class=QuietHandler
     )  # type: ignore
     address, port = server.socket.getsockname()
-    print("Serve at", server.socket.getsockname())
     t = threading.Thread(target=server.serve_forever, daemon=True)
     t.start()
     return "http://%s:%s" % (address, port)
