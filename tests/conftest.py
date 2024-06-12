@@ -65,7 +65,16 @@ def set_dummy_token(repo_url):
 
 
 @pytest.fixture(scope="function")
-def set_secret_token(repo_url):
+def set_secret_token():
+    token_remove()
+    secret_token = os.environ.get("CE_TOKEN", "")
+    token_set(secret_token)
+    yield
+    token_remove()
+
+
+@pytest.fixture(scope="function")
+def set_secret_token_mock_server(repo_url):
     token_remove()
     secret_token = os.environ.get("CE_TOKEN", "")
     token_set(secret_token)
