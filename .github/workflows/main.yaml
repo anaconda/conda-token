@@ -101,6 +101,7 @@ jobs:
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
+          PYTHONHASHSEED: 0
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
