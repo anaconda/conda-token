@@ -14,7 +14,7 @@ def json_skip_preamble(text):
     capture = False
     captured = []
     for line in text.splitlines():
-        if line.strip().startswith("{"):
+        if line.strip().startswith(("{", "[")):
             capture = True
         if capture:
             captured.append(line)
@@ -28,7 +28,13 @@ Random text
  {"foo":
 "bar"
 }"""
+
+    lines2="""
+Unexpected warning
+ [ 1 ]
+"""
     assert json_skip_preamble(lines) == {"foo": "bar"}
+    assert json_skip_preamble(lines2) == [1]
 
 
 @pytest.mark.skipif(
