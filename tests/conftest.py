@@ -48,6 +48,9 @@ def remove_token(repo_url):
 
 @pytest.fixture(scope="function")
 def remove_anaconda_cloud_token():
+    """
+    Remove token without mock repo_url
+    """
     token_remove()
     yield
     token_remove()
