@@ -5,6 +5,23 @@ Minimal anaconda.cloud implementation for testing.
 import threading
 import wsgiref.simple_server
 import wsgiref.util
+import io
+
+MESSAGES = io.StringIO()
+
+
+class QuietHandler(wsgiref.simple_server.WSGIRequestHandler):
+    def log_message(self, format, *args):
+        """Log an arbitrary message (don't confuse test's stdout/stderr capture)."""
+        message = format % args
+        MESSAGES.write(
+            "%s - - [%s] %s\n"
+            % (
+                self.address_string(),
+                self.log_date_time_string(),
+                message.translate(self._control_char_table),
+            )
+        )
 
 
 class App:
@@ -26,7 +43,9 @@ class App:
 
 def run_server():
     app = App()  # wsgiref.types added in 3.11
-    server = wsgiref.simple_server.make_server("127.0.0.1", 0, app)  # type: ignore
+    server = wsgiref.simple_server.make_server(
+        "127.0.0.1", 0, app, handler_class=QuietHandler
+    )  # type: ignore
     address, port = server.socket.getsockname()
     print("Serve at", server.socket.getsockname())
     t = threading.Thread(target=server.serve_forever, daemon=True)
