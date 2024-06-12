@@ -91,7 +91,7 @@ def test_conda_install_rope(set_secret_token, uninstall_rope):
         )
         try:
             rope = json_skip_preamble(stdout)["rope"][0]
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             print("Could not decode", stdout)
             raise
         assert rope["base_url"] == "https://repo.anaconda.cloud/repo/main"
