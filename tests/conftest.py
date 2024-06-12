@@ -40,7 +40,14 @@ def set_ssl_verify_true():
 
 
 @pytest.fixture(scope="function")
-def remove_token():
+def remove_token(repo_url):
+    token_remove()
+    yield
+    token_remove()
+
+
+@pytest.fixture(scope="function")
+def remove_anaconda_cloud_token():
     token_remove()
     yield
     token_remove()
