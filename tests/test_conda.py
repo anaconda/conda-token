@@ -29,7 +29,7 @@ Random text
 "bar"
 }"""
 
-    lines2="""
+    lines2 = """
 Unexpected warning
  [ 1 ]
 """
@@ -49,7 +49,10 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
         print("Could not decode", stdout)
         raise
     # conda 23.x appears to have changed this value to a string
-    assert rope["metadata_signature_status"] in (0, "(INFO: package metadata is signed by Anaconda and trusted)")
+    assert rope["metadata_signature_status"] in (
+        0,
+        "(INFO: package metadata is signed by Anaconda and trusted)",
+    )
 
     stdout, _, _ = run_command(
         Commands.SEARCH, "--spec", "conda-forge::rope=0.18.0=pyhd3deb0d_0", "--json"
@@ -59,7 +62,10 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
     except json.JSONDecodeError:
         print("Could not decode", stdout)
         raise
-    assert rope["metadata_signature_status"] == -1
+    assert rope["metadata_signature_status"] in (
+        -1,
+        "(WARNING: metadata signature verification failed)",
+    )
 
 
 def test_conda_search_rope(set_secret_token):
