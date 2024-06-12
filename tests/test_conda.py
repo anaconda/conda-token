@@ -62,7 +62,10 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
     except json.JSONDecodeError:
         print("Could not decode", stdout)
         raise
-    assert rope["metadata_signature_status"] in (
+    # conda 23.x appears to omit the key if unsigned
+    assert "metadata_signature_status" not in rope or rope[
+        "metadata_signature_status"
+    ] in (
         -1,
         "(WARNING: metadata signature verification failed)",
     )
