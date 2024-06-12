@@ -49,7 +49,7 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
         print("Could not decode", stdout)
         raise
     # conda 23.x appears to have changed this value to a string
-    assert rope["metadata_signature_status"] in (
+    assert rope.get("metadata_signature_status") in (
         0,
         "(INFO: package metadata is signed by Anaconda and trusted)",
     ), rope
@@ -63,9 +63,9 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
         print("Could not decode", stdout)
         raise
     # conda 23.x appears to omit the key if unsigned
-    assert "metadata_signature_status" not in rope or rope[
+    assert "metadata_signature_status" not in rope or rope.get(
         "metadata_signature_status"
-    ] in (
+    ) in (
         -1,
         "(WARNING: metadata signature verification failed)",
     ), rope
