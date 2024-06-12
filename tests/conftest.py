@@ -1,8 +1,10 @@
 import os
 import warnings
+from unittest import mock
 
 import pytest
 from conda.cli.python_api import Commands, run_command
+
 from conda_token.repo_config import clean_index, token_remove, token_set
 
 
@@ -102,13 +104,11 @@ def repodata_url(repo_url):
 
 @pytest.fixture
 def repo_url(test_server_url):
-    # could restore the value by using a context manager and/or mock
     repo_url = test_server_url + "/repo/"
-    os.environ["CONDA_TOKEN_REPO_URL"] = repo_url
-    import conda_token
+    with mock.patch.dict(os.environ, {"CONDA_TOKEN_REPO_URL": repo_url}):
+        with mock.patch("conda_token.repo_config.REPO_URL", repo_url):
+            yield repo_url
 
-    conda_token.repo_config.REPO_URL = repo_url
-    return repo_url
 
 @pytest.fixture(scope="session")
 def test_server_url():

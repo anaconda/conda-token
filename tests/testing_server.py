@@ -1,6 +1,7 @@
 """
 Minimal anaconda.cloud implementation for testing.
 """
+
 import threading
 import wsgiref.simple_server
 import wsgiref.util
@@ -9,7 +10,8 @@ import wsgiref.util
 class App:
     def __call__(self, environ, start_response):
         request_path = wsgiref.util.request_uri(environ, include_query=False)
-        if "/t/" in request_path:
+        # require token, but disallow the invalid token
+        if "/t/" in request_path and "/t/SECRET/" not in request_path:
             status = "200 OK"
         else:
             status = "403 Forbidden"
@@ -24,7 +26,7 @@ class App:
 
 def run_server():
     app = App()  # wsgiref.types added in 3.11
-    server = wsgiref.simple_server.make_server("127.0.0.1", 50565, app)  # type: ignore
+    server = wsgiref.simple_server.make_server("127.0.0.1", 0, app)  # type: ignore
     address, port = server.socket.getsockname()
     print("Serve at", server.socket.getsockname())
     t = threading.Thread(target=server.serve_forever, daemon=True)
