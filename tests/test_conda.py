@@ -134,7 +134,7 @@ def test_conda_install_with_conda_forge(
             Commands.LIST, "conda-forge-pinning", "--show-channel-urls", "--json"
         )
         try:
-            conda_forge_pinning = json_skip_preamble(stdout)["rope"][0]
+            conda_forge_pinning = json_skip_preamble(stdout)[0]
         except json.JSONDecodeError:
             print("Could not decode", stdout)
             raise
