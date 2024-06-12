@@ -10,11 +10,19 @@ from conda_token.repo_config import CONDA_VERSION
 @pytest.mark.skipif(CONDA_VERSION < parse('4.10.1'), reason='Signature verification was added in Conda 4.10.1')
 def test_conda_search_rope_signed(set_secret_token_with_signing):
     stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'rope=0.18.0=py_0', '--json')
-    rope = json.loads(stdout)['rope'][0]
+    try:
+        rope = json.loads(stdout)['rope'][0]
+    except json.JSONDecodeError:
+        print("Could not decode", stdout)
+        raise
     assert rope['metadata_signature_status'] == 0
 
     stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'conda-forge::rope=0.18.0=pyhd3deb0d_0', '--json')
-    rope = json.loads(stdout)['rope'][0]
+    try:
+        rope = json.loads(stdout)['rope'][0]
+    except json.JSONDecodeError:
+        print("Could not decode", stdout)
+        raise
     assert rope['metadata_signature_status'] == -1
 
 
@@ -23,7 +31,11 @@ def test_conda_search_rope(set_secret_token):
         stdout, _, _ = run_command(Commands.SEARCH, '--spec', 'rope=0.18.0=py_0', '--json')
     else:
         stdout, _, _ = run_command(Commands.SEARCH, 'rope==0.18.0=py_0', '--json')
-    rope = json.loads(stdout)['rope'][0]
+    try:
+        rope = json.loads(stdout)['rope'][0]
+    except json.JSONDecodeError:
+        print("Could not decode", stdout)
+        raise
     assert rope['url'].startswith('https://repo.anaconda.cloud/repo/main/noarch')
 
 
@@ -38,7 +50,11 @@ def test_conda_install_rope(set_secret_token, uninstall_rope):
                 assert p.startswith('https://repo.anaconda.cloud/repo/main')
     else:
         stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
-        rope = json.loads(stdout)[0]
+        try:
+            rope = json.loads(stdout)['rope'][0]
+        except json.JSONDecodeError:
+            print("Could not decode", stdout)
+            raise
         assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
 
@@ -55,9 +71,17 @@ def test_conda_install_with_conda_forge(set_secret_token, uninstall_rope, uninst
                 assert p.startswith('https://conda.anaconda.org/conda-forge')
     else:
         stdout, _, _ = run_command(Commands.LIST, 'rope', '--show-channel-urls', '--json')
-        rope = json.loads(stdout)[0]
+        try:
+            rope = json.loads(stdout)['rope'][0]
+        except json.JSONDecodeError:
+            print("Could not decode", stdout)
+            raise
         assert rope['base_url'] == 'https://repo.anaconda.cloud/repo/main'
 
         stdout, _, _ = run_command(Commands.LIST, 'conda-forge-pinning', '--show-channel-urls', '--json')
-        conda_forge_pinning = json.loads(stdout)[0]
+        try:
+            conda_forge_pinning = json.loads(stdout)['rope'][0]
+        except json.JSONDecodeError:
+            print("Could not decode", stdout)
+            raise
         assert conda_forge_pinning['base_url'] == 'https://conda.anaconda.org/conda-forge'
