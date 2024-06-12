@@ -41,6 +41,10 @@ Unexpected warning
     CONDA_VERSION < parse("4.10.1"),
     reason="Signature verification was added in Conda 4.10.1",
 )
+@pytest.mark.skipif(
+    parse("23.9") <= CONDA_VERSION < parse("23.10"),
+    reason="metadata_signature_status missing in conda 23.9",
+)
 def test_conda_search_rope_signed(set_secret_token_with_signing):
     stdout, _, _ = run_command(Commands.SEARCH, "--spec", "rope=0.18.0=py_0", "--json")
     try:
