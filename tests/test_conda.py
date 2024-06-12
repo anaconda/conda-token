@@ -14,7 +14,7 @@ def json_skip_preamble(text):
     capture = False
     captured = []
     for line in text.splitlines():
-        if line.startswith("{"):
+        if line.strip().startswith("{"):
             capture = True
         if capture:
             captured.append(line)
@@ -25,7 +25,7 @@ def test_skip_garbage():
     lines = """
 Error message
 Random text
-{"foo":
+ {"foo":
 "bar"
 }"""
     assert json_skip_preamble(lines) == {"foo": "bar"}
