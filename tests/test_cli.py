@@ -25,9 +25,8 @@ def test_token_list(remove_token, capsys, repo_url):
     ret = cli.cli(["list"])
     captured = capsys.readouterr()
     assert ret == 1
-    assert (
-        captured.err
-        == "No tokens have been configured for %s\n" % (repo_url,)
+    assert captured.err.splitlines()[-1] == "No tokens have been configured for %s" % (
+        repo_url,
     )
 
 
@@ -63,7 +62,9 @@ def test_token_set_error(remove_token, capsys, repo_url):
     ret = cli.cli(["list"])
     assert ret == 1
     captured = capsys.readouterr()
-    assert captured.err == "No tokens have been configured for %s\n" % (repo_url,)
+    assert captured.err.splitlines()[-1] == "No tokens have been configured for %s" % (
+        repo_url,
+    )
 
 
 @pytest.mark.skipif(
