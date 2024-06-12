@@ -52,7 +52,7 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
     assert rope["metadata_signature_status"] in (
         0,
         "(INFO: package metadata is signed by Anaconda and trusted)",
-    )
+    ), rope
 
     stdout, _, _ = run_command(
         Commands.SEARCH, "--spec", "conda-forge::rope=0.18.0=pyhd3deb0d_0", "--json"
@@ -68,7 +68,7 @@ def test_conda_search_rope_signed(set_secret_token_with_signing):
     ] in (
         -1,
         "(WARNING: metadata signature verification failed)",
-    )
+    ), rope
 
 
 def test_conda_search_rope(set_secret_token):
