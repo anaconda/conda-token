@@ -10,8 +10,8 @@ except ImportError:
     from conda.connection import CondaHttpAuth, CondaSession
 
 
-def test_add_token(set_dummy_token, repodata_url):
-    assert token_list()['https://repo.anaconda.cloud/repo/'] == 'SECRET'
+def test_add_token(set_dummy_token, repodata_url, repo_url):
+    assert token_list()[repo_url] == 'SECRET'
 
     base_url = repodata_url # 'https://repo.anaconda.cloud/repo/main/osx-64/repodata.json'
     scheme, netloc, path, *rest = urlparse(base_url)
@@ -36,12 +36,14 @@ def test_repodata_200(set_secret_token, repodata_url):
     assert r.status_code == 200
 
 
-def test_validate_token_error():
+# repo_url fixture configures test server, patches REPO_URL
+def test_validate_token_error(repo_url):
     with pytest.raises(CondaTokenError):
         validate_token('SECRET')
 
 
-def test_validate_token_works(secret_token):
+# repo_url fixture configures test server, patches REPO_URL
+def test_validate_token_works(secret_token, repo_url):
     assert validate_token(secret_token) is None
 
 

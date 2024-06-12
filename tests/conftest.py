@@ -1,8 +1,10 @@
 import os
 import warnings
+from unittest import mock
 
 import pytest
 from conda.cli.python_api import Commands, run_command
+
 from conda_token.repo_config import clean_index, token_remove, token_set
 
 
@@ -45,7 +47,7 @@ def remove_token():
 
 
 @pytest.fixture(scope="function")
-def set_dummy_token():
+def set_dummy_token(repo_url):
     token_remove()
     token_set("SECRET")
     yield
@@ -53,7 +55,7 @@ def set_dummy_token():
 
 
 @pytest.fixture(scope="function")
-def set_secret_token():
+def set_secret_token(repo_url):
     token_remove()
     secret_token = os.environ.get("CE_TOKEN", "")
     token_set(secret_token)
@@ -91,10 +93,25 @@ def uninstall_colorama():
 
 
 @pytest.fixture
-def channeldata_url():
-    return "https://repo.anaconda.cloud/repo/main/channeldata.json"
+def channeldata_url(repo_url):
+    return repo_url + "main/channeldata.json"
 
 
 @pytest.fixture
-def repodata_url():
-    return "https://repo.anaconda.cloud/repo/main/osx-64/repodata.json"
+def repodata_url(repo_url):
+    return repo_url + "main/osx-64/repodata.json"
+
+
+@pytest.fixture
+def repo_url(test_server_url):
+    repo_url = test_server_url + "/repo/"
+    with mock.patch.dict(os.environ, {"CONDA_TOKEN_REPO_URL": repo_url}):
+        with mock.patch("conda_token.repo_config.REPO_URL", repo_url):
+            yield repo_url
+
+
+@pytest.fixture(scope="session")
+def test_server_url():
+    from . import testing_server
+
+    return testing_server.run_server()
