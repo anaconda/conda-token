@@ -89,12 +89,42 @@ jobs:
         include:
           - python-version: "3.12"
             conda-version: "24.1"
+            os: ubuntu-latest
 
           - python-version: "3.12"
             conda-version: "24.3"
+            os: ubuntu-latest
 
           - python-version: "3.12"
             conda-version: "24.5"
+            os: ubuntu-latest
+
+
+          - python-version: "3.12"
+            conda-version: "24.1"
+            os: macos-latest
+
+          - python-version: "3.12"
+            conda-version: "24.3"
+            os: macos-latest
+
+          - python-version: "3.12"
+            conda-version: "24.5"
+            os: macos-latest
+
+
+          - python-version: "3.12"
+            conda-version: "24.1"
+            os: windows-latest
+
+          - python-version: "3.12"
+            conda-version: "24.3"
+            os: windows-latest
+
+          - python-version: "3.12"
+            conda-version: "24.5"
+            os: windows-latest
+
 
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
