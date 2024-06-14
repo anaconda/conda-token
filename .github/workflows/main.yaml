@@ -153,9 +153,9 @@ jobs:
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && conda --version && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda --version && conda list && py.test -xv
           else
-            source $HOME/miniconda/bin/activate root && conda --version && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda --version && conda list && && py.test -xv
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1
