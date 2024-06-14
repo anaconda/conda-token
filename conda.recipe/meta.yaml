@@ -31,13 +31,12 @@ requirements:
     - python
     - pip
   run:
-    - python >=3.8
+    # includes non-setuptools != dependency
+    - conda >=4.6,!=23.10.0,!=23.11.0
+    - conda-content-trust
+    - packaging
     - python
-    # dependencies are defined in setup.py
-    {% for dep in data['install_requires'] %}
-    - {{ dep.lower() }}
-    {% endfor %}
-    {# raw is for ignoring templating with cookiecutter, leaving it for use with conda-build #}
+    - python >=3.8
 
 test:
   source_files:

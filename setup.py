@@ -2,7 +2,7 @@ from setuptools import setup
 import versioneer
 
 requirements = [
-    'conda>=4.3',
+    'conda>=4.6',
     'packaging',
     'conda-content-trust'
 ]
@@ -25,9 +25,6 @@ setup(
     install_requires=requirements,
     keywords='conda-token',
     classifiers=[
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3',
     ]
 )

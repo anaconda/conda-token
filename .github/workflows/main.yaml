@@ -36,9 +36,8 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [3.8, 3.9, "3.10", "3.12"]
-        # conda-version: [4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12", "23.7", "23.9", "23.10", "23.11", "24.1", "24.3", "24.5"]
-        conda-version: ["23.10", "23.11", "24.1", "24.3", "24.5"]
+        # 23.10 and 23.11 have inscrutable issues on py38, py39, py310? Mark as incompatible in recipe.
+        conda-version: [4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12", "23.7", "23.9", "24.1", "24.3", "24.5"]
         exclude:
           # Python 3.8
           - python-version: 3.8
@@ -151,7 +150,7 @@ jobs:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
           PYTHONHASHSEED: 0
         shell: bash
-        # run conda --version at both ends, make sure it stays the same
+        # run conda --version at both ends, make sure it stays the same (but failed test won't show ending version)
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
             source $HOME/miniconda/Scripts/activate root && conda info && conda list && py.test -xv && conda --version
