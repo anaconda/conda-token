@@ -47,7 +47,7 @@ Unexpected warning
 )
 @pytest.mark.skipif(
     CONDA_VERSION >= parse("24.1"),
-    reason="conda >=24.1 delays signature checks to after a solve"
+    reason="conda >=24.1 delays signature checks to after a solve",
 )
 def test_conda_search_rope_signed(set_secret_token_with_signing):
     stdout, _, _ = run_command(Commands.SEARCH, "--spec", "rope=0.18.0=py_0", "--json")
@@ -95,7 +95,11 @@ def test_conda_search_rope(set_secret_token):
 
 
 def test_conda_install_rope(set_secret_token, uninstall_rope):
-    run_command(Commands.INSTALL, "rope", "-y")
+    install_args = (Commands.INSTALL, "rope", "-y")
+    # is libmamba-solver using its own network code, not adding the token here?
+    if parse("23.10") < CONDA_VERSION < parse("24.1"):
+        install_args = install_args + ("--solver=classic",)
+    run_command(*install_args)
 
     if CONDA_VERSION < parse("4.6"):
         stdout, _, _ = run_command(Commands.LIST, "--explicit")
