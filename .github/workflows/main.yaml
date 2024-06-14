@@ -151,11 +151,12 @@ jobs:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
           PYTHONHASHSEED: 0
         shell: bash
+        # run conda --version at both ends, make sure it stays the same
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && conda --version && conda list && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda info && conda list && py.test -xv && conda --version
           else
-            source $HOME/miniconda/bin/activate root && conda --version && conda list && && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda info && conda list && && py.test -xv && conda --version
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1
