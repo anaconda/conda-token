@@ -4,11 +4,7 @@ from conda_token.repo_config import CondaTokenError, get_ssl_verify, token_list,
 from requests import HTTPError
 from urllib.parse import urlparse, urlunparse
 
-try:
-    from conda.gateways.connection.session import CondaHttpAuth, CondaSession
-except ImportError:
-    from conda.connection import CondaHttpAuth, CondaSession
-
+from conda.gateways.connection.session import CondaHttpAuth, CondaSession
 
 def test_add_token(set_dummy_token, repodata_url, repo_url):
     assert token_list()[repo_url] == 'SECRET'
