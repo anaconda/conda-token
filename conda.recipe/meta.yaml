@@ -2,7 +2,7 @@
 
 package:
   name: conda-token
-  
+
   version: {{ data['version'] }}
 
 source:
@@ -15,12 +15,12 @@ build:
   # "skip: True  # [not win]" to limit to Windows.
   script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv .
   noarch: python
-  
+
   entry_points:
     {% for entry in data['entry_points']['console_scripts'] %}
       - {{ entry.split('=')[0].strip() }} = {{ entry.split('=')[1].strip() }}
     {% endfor %}
- 
+
 
 requirements:
   # if you need compilers, uncomment these
@@ -31,12 +31,12 @@ requirements:
     - python
     - pip
   run:
+    # includes non-setuptools != dependency
+    - conda >=4.6,!=23.10.0,!=23.11.0
+    - conda-content-trust
+    - packaging
     - python
-    # dependencies are defined in setup.py
-    {% for dep in data['install_requires'] %}
-    - {{ dep.lower() }}
-    {% endfor %}
-    {# raw is for ignoring templating with cookiecutter, leaving it for use with conda-build #}
+    - python >=3.8
 
 test:
   source_files:

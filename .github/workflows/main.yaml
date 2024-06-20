@@ -6,20 +6,23 @@ on:
   pull_request:
     branches:
       - main
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 jobs:
   package:
     name: Build package
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           fetch-depth: 0
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@a4260408e20b96e80095f42ff7f1a15b27dd94ca # v3.0.4
         with:
           miniconda-version: "latest"
           activate-environment: build-conda-token
           environment-file: etc/build-environment.yml
-          python-version: 3.8
+          python-version: "3.11"
           auto-activate-base: false
       - name: Conda Build
         shell: bash -l {0}
@@ -27,61 +30,16 @@ jobs:
           conda build conda.recipe --no-test
           mv $CONDA_PREFIX/conda-bld .
   test:
-    name: Test (Conda ${{ matrix.conda-version }}, Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    name: ${{ matrix.os }}-${{ matrix.conda-version }}-py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, "3.10"]
-        conda-version: [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12"]
+        python-version: [3.8, 3.9, "3.10", "3.12"]
+        # 23.10 and 23.11 have inscrutable issues on py38, py39, py310? Mark as incompatible in recipe.
+        conda-version: [4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12", "23.7", "23.9", "24.1", "24.3", "24.5"]
         exclude:
-          # Python 2.7
-          - python-version: 2.7
-            conda-version: 4.8
-          - python-version: 2.7
-            conda-version: 4.9
-          - python-version: 2.7
-            conda-version: "4.10"
-          - python-version: 2.7
-            conda-version: "4.11"
-          - python-version: 2.7
-            conda-version: "4.12"
-
-          # Python 3.5
-          - python-version: 3.5
-            conda-version: 4.5
-          - python-version: 3.5
-            conda-version: 4.6
-          - python-version: 3.5
-            conda-version: 4.7
-          - python-version: 3.5
-            conda-version: 4.8
-          - python-version: 3.5
-            conda-version: 4.9
-          - python-version: 3.5
-            conda-version: "4.10"
-          - python-version: 3.5
-            conda-version: "4.11"
-          - python-version: 3.5
-            conda-version: "4.12"
-          
-          # Python 3.6
-          - python-version: 3.6
-            conda-version: 4.9
-          - python-version: 3.6
-            conda-version: "4.10"
-          - python-version: 3.6
-            conda-version: "4.11"
-          - python-version: 3.6
-            conda-version: "4.12"
-
-          # Python 3.7
-          - python-version: 3.7
-            conda-version: 4.3
-          - python-version: 3.7
-            conda-version: 4.4
-
           # Python 3.8
           - python-version: 3.8
             conda-version: 4.3
@@ -125,34 +83,85 @@ jobs:
             python-version: "3.10"
           - conda-version: "4.11"
             python-version: "3.10"
+
+          # Python 3.12
+          - python-version: "3.12"
+
+          # Single failing Windows action
+          - os: windows-latest
+            conda-version: "4.8"
+            python-version: "3.8"
+
+        include:
+          - python-version: "3.12"
+            conda-version: "24.1"
+            os: ubuntu-latest
+
+          - python-version: "3.12"
+            conda-version: "24.3"
+            os: ubuntu-latest
+
+          - python-version: "3.12"
+            conda-version: "24.5"
+            os: ubuntu-latest
+
+
+          - python-version: "3.12"
+            conda-version: "24.1"
+            os: macos-latest
+
+          - python-version: "3.12"
+            conda-version: "24.3"
+            os: macos-latest
+
+          - python-version: "3.12"
+            conda-version: "24.5"
+            os: macos-latest
+
+
+          - python-version: "3.12"
+            conda-version: "24.1"
+            os: windows-latest
+
+          - python-version: "3.12"
+            conda-version: "24.3"
+            os: windows-latest
+
+          - python-version: "3.12"
+            conda-version: "24.5"
+            os: windows-latest
+
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       - name: Download conda standalone
         shell: bash
         run: |
           if [ $RUNNER_OS == 'Linux' ]; then
-            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-linux-64.exe -o conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-linux-64.exe -o conda.exe
           elif [ $RUNNER_OS == 'Windows' ]; then
-            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-win-64.exe -o conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-win-64.exe -o conda.exe
           elif [ $RUNNER_OS == 'macOS' ]; then
-            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-latest-osx-64.exe -o conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-osx-64.exe -o conda.exe
           fi
           chmod +x conda.exe
           ./conda.exe config --set auto_update_conda false
           ./conda.exe info
-      - name: Setup miniconda 
+      - name: Setup miniconda
         shell: bash
         run: |
-          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust tqdm
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}
+          PYTHONHASHSEED: 0
         shell: bash
+        # run conda --version at both ends, make sure it stays the same (but failed test won't show ending version)
         run: |
           if [ $RUNNER_OS == 'Windows' ]; then
-            source $HOME/miniconda/Scripts/activate root && conda --version && py.test -xv
+            source $HOME/miniconda/Scripts/activate root && conda info && conda list && py.test -xv && conda --version
           else
-            source $HOME/miniconda/bin/activate root && conda --version && py.test -xv
+            source $HOME/miniconda/bin/activate root && conda info && conda list && py.test -xv && conda --version
           fi
 #     - name: Codecov
 #       uses: codecov/codecov-action@v1
