@@ -87,6 +87,11 @@ jobs:
           # Python 3.12
           - python-version: "3.12"
 
+          # Single failing Windows action
+          - os: windows-latest
+            conda-version: "4.8"
+            python-version: "3.8"
+
         include:
           - python-version: "3.12"
             conda-version: "24.1"
