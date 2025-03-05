@@ -17,7 +17,11 @@ setup(
     author_email='adefusco@anaconda.com',
     url='https://github.com/Anaconda/conda-token',
     packages=['conda_token'],
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            'conda-token=conda_token.cli:cli'
+        ]
+    },
     install_requires=requirements,
     keywords='conda-token',
     classifiers=[
