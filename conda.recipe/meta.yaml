@@ -2,8 +2,7 @@
 
 package:
   name: conda-token
-  version: 0.6.0
-# version: {{ data['version'] }}
+  version: {{ data['version'] }}
 
 source:
   path: ..
