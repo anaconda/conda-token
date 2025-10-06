@@ -19,7 +19,7 @@ requirements:
     - conda >=24
     - conda-content-trust
     - packaging
-    - anaconda-auth
+    - anaconda-auth >=0.10.0
 
 test:
   imports:
