@@ -2,9 +2,7 @@ from setuptools import setup
 import versioneer
 
 requirements = [
-    'conda>=4.6',
-    'packaging',
-    'conda-content-trust'
+    "anaconda-auth>=0.9.2",
 ]
 
 setup(
