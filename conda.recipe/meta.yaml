@@ -16,11 +16,9 @@ requirements:
     - python
     - pip
   run:
-    # includes non-setuptools != dependency
-    - conda >=4.6,!=23.10.0,!=23.11.0
+    - conda >=24
     - conda-content-trust
     - packaging
-    - python >=3.8
     - anaconda-auth
 
 test:

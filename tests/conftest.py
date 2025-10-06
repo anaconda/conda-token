@@ -3,7 +3,7 @@ import warnings
 from unittest import mock
 
 import pytest
-from conda.cli.python_api import Commands, run_command
+from conda_token.conda_api import Commands, run_command
 
 from conda_token.repo_config import clean_index, token_remove, token_set
 

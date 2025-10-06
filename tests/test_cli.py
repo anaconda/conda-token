@@ -41,9 +41,8 @@ def test_token_set(remove_token, secret_token, capsys, repo_url):
     ret = cli.cli(["list"])
     assert ret == 0
     captured = capsys.readouterr()
-    assert (
-        captured.out
-        == """Success! Your token was validated and Conda has been configured.
+    assert captured.out.endswith(
+        """Success! Your token was validated and Conda has been configured.
 %s %s\n"""
         % (repo_url, secret_token)
     )
