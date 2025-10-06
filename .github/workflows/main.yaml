@@ -52,7 +52,7 @@ jobs:
           - python-version: 3.13
             conda-version: 25.1
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      - uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493
       - name: Download conda standalone
         shell: bash
         run: |
