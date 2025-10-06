@@ -8,8 +8,8 @@ source:
   path: ..
 
 build:
-  number: 0
-  noarch: generic
+  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv .
+  noarch: python
 
 requirements:
   host:
@@ -17,13 +17,12 @@ requirements:
     - pip
   run:
     - conda >=24
-    - conda-content-trust
-    - packaging
     - anaconda-auth >=0.10.0
 
 test:
   imports:
     - anaconda_auth
+    - conda_token
 
 about:
   home: https://github.com/anaconda/conda-token
