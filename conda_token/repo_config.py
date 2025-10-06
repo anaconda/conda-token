@@ -10,7 +10,8 @@ from os.path import abspath, expanduser, join
 import conda
 import conda.gateways.logging  # noqa: F401
 from conda.base.context import context, reset_context
-from conda.cli.python_api import Commands, run_command
+from conda_token.conda_api import Commands
+from conda.cli.main import main as run_command
 from conda.exceptions import CondaKeyError
 from conda.gateways.anaconda_client import (
     read_binstar_tokens,
@@ -47,7 +48,10 @@ class CondaVersionWarning(UserWarning):
 
 
 def can_restore_free_channel():
-    return CONDA_VERSION >= version.parse("4.7.0")
+    return (
+        CONDA_VERSION >= version.parse("4.7.0") and
+        CONDA_VERSION < version.parse("25.9.0")
+    )
 
 
 def get_ssl_verify():

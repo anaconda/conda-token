@@ -1,5 +1,5 @@
 import pytest
-from conda.cli.python_api import Commands, run_command
+from conda_token.conda_api import Commands, run_command
 from conda_token.repo_config import CondaTokenError, get_ssl_verify, token_list, validate_token
 from requests import HTTPError
 from urllib.parse import urlparse, urlunparse

@@ -36,102 +36,21 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [3.8, 3.9, "3.10", "3.12"]
-        # 23.10 and 23.11 have inscrutable issues on py38, py39, py310? Mark as incompatible in recipe.
-        conda-version: [4.6, 4.7, 4.8, 4.9, "4.10", "4.11", "4.12", "23.7", "23.9", "24.1", "24.3", "24.5"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        conda-version: ["24.1", "24.3", "24.5", "24.9", "25.1", "25.5", "25.9"]
         exclude:
-          # Python 3.8
-          - python-version: 3.8
-            conda-version: 4.3
-          - python-version: 3.8
-            conda-version: 4.4
-          - python-version: 3.8
-            conda-version: 4.5
-          - python-version: 3.8
-            conda-version: 4.6
-          - python-version: 3.8
-            conda-version: 4.7
-
-          # Python 3.9
-          - conda-version: 4.3
-            python-version: 3.9
-          - conda-version: 4.4
-            python-version: 3.9
-          - conda-version: 4.5
-            python-version: 3.9
-          - conda-version: 4.6
-            python-version: 3.9
-          - conda-version: 4.7
-            python-version: 3.9
-          - conda-version: 4.8
-            python-version: 3.9
-
-          # Python 3.10
-          - conda-version: 4.3
-            python-version: "3.10"
-          - conda-version: 4.4
-            python-version: "3.10"
-          - conda-version: 4.5
-            python-version: "3.10"
-          - conda-version: 4.6
-            python-version: "3.10"
-          - conda-version: 4.7
-            python-version: "3.10"
-          - conda-version: 4.8
-            python-version: "3.10"
-          - conda-version: 4.9
-            python-version: "3.10"
-          - conda-version: "4.11"
-            python-version: "3.10"
-
-          # Python 3.12
-          - python-version: "3.12"
-
-          # Single failing Windows action
-          - os: windows-latest
-            conda-version: "4.8"
-            python-version: "3.8"
-
-        include:
-          - python-version: "3.12"
-            conda-version: "24.1"
-            os: ubuntu-latest
-
-          - python-version: "3.12"
-            conda-version: "24.3"
-            os: ubuntu-latest
-
-          - python-version: "3.12"
-            conda-version: "24.5"
-            os: ubuntu-latest
-
-
-          - python-version: "3.12"
-            conda-version: "24.1"
-            os: macos-latest
-
-          - python-version: "3.12"
-            conda-version: "24.3"
-            os: macos-latest
-
-          - python-version: "3.12"
-            conda-version: "24.5"
-            os: macos-latest
-
-
-          - python-version: "3.12"
-            conda-version: "24.1"
-            os: windows-latest
-
-          - python-version: "3.12"
-            conda-version: "24.3"
-            os: windows-latest
-
-          - python-version: "3.12"
-            conda-version: "24.5"
-            os: windows-latest
-
-
+          - python-version: 3.9
+            conda-version: 25.9
+          - python-version: 3.13
+            conda-version: 24.1
+          - python-version: 3.13
+            conda-version: 24.3
+          - python-version: 3.13
+            conda-version: 24.5
+          - python-version: 3.13
+            conda-version: 24.9
+          - python-version: 3.13
+            conda-version: 25.1
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       - name: Download conda standalone
@@ -142,7 +61,7 @@ jobs:
           elif [ $RUNNER_OS == 'Windows' ]; then
             curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-win-64.exe -o conda.exe
           elif [ $RUNNER_OS == 'macOS' ]; then
-            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-osx-64.exe -o conda.exe
+            curl https://repo.anaconda.com/pkgs/misc/conda-execs/conda-4.10.3-osx-arm64.exe -o conda.exe
           fi
           chmod +x conda.exe
           ./conda.exe config --set auto_update_conda false
@@ -150,7 +69,7 @@ jobs:
       - name: Setup miniconda
         shell: bash
         run: |
-          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests conda-content-trust tqdm
+          ./conda.exe create -p $HOME/miniconda conda=${{ matrix.conda-version }} python=${{ matrix.python-version }} packaging pytest pytest-cov requests tqdm
       - name: py.test
         env:
           CE_TOKEN: ${{ secrets.CE_TOKEN }}

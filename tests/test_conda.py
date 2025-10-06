@@ -3,7 +3,7 @@ import json
 
 from packaging.version import parse
 
-from conda.cli.python_api import Commands, run_command
+from conda_token.conda_api import Commands, run_command
 from conda_token.repo_config import CONDA_VERSION
 
 
