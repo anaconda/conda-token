@@ -1,5 +1,9 @@
 """
 conda-token: Configure Conda to utilize Anaconda Commercial Edition.
+
+Note that conda-token is deprecated and backwards-compatible implementation has been
+moved to https://github.com/anaconda/anaconda-auth.
+
 """
 
 from ._version import get_versions
