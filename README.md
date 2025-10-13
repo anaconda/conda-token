@@ -32,19 +32,18 @@ You can install ``conda-token`` using either Anaconda Navigator or the Conda com
 
 To use the Conda CLI run the following in your terminal
 
-.. code-block:: text
-
-   conda install -n root conda-token
-
+```shell
+conda install -n root conda-token
+```
 
 ## Authenticate to Anaconda Commercial Edition
 
 You will need to use the terminal to authenticate to Anaconda Commercial Edition and configure access.
 In your terminal run the following command
 
-.. code-block:: text
-
-   conda-token set <TOKEN>
+```shell
+conda-token set <TOKEN>
+```
 
 Replace ``<TOKEN>`` with the token value you received in your email after purchasing a subscription.
 
@@ -62,7 +61,5 @@ Remove token and reset Conda configuration
 You can remove your token and reset your Conda configuration to its default state by running
 
 ```shell
-   conda-token remove
+conda-token remove
 ```
-
-
