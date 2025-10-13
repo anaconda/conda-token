@@ -3,10 +3,8 @@
 > [!WARNING]
 > The `conda-token` implementation has been moved to the [`anaconda-auth`](https://github.com/anaconda/anaconda-auth) repository and this repository is deprecated and has been archived.
 
-.. image:: https://img.shields.io/conda/v/anaconda/conda-token.svg
-   :target: https://anaconda.org/anaconda/conda-token
-
-.. sectnum::
+<!--.. image:: https://img.shields.io/conda/v/anaconda/conda-token.svg-->
+<!--   :target: https://anaconda.org/anaconda/conda-token-->
 
 Set your token and configure ``default_channels`` to access Anaconda Commercial Edition. Follow the steps below
 to use ``conda-token`` to authenticate and configure your Anaconda or Miniconda install.
@@ -25,8 +23,7 @@ your Anaconda or Miniconda install
 ## Install Anaconda or Miniconda
 
 If you already have Anaconda or Miniconda installed you can skip this step.
-Otherwise download either `Anaconda`_ or `Miniconda`_ and install it on your system.
-
+Otherwise download either [Anaconda](https://anaconda.com/download) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it on your system.
 
 ## Install conda-token
 
@@ -64,10 +61,8 @@ Remove token and reset Conda configuration
 
 You can remove your token and reset your Conda configuration to its default state by running
 
-.. code-block:: text
-
+```shell
    conda-token remove
+```
 
 
-.. _`Anaconda`: https://anaconda.com/download
-.. _`Miniconda`: https://docs.conda.io/en/latest/miniconda.html
