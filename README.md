@@ -1,6 +1,4 @@
-===============================
-Conda token
-===============================
+# Conda token
 
 > [!WARNING]
 > The `conda-token` implementation has been moved to the [`anaconda-auth`](https://github.com/anaconda/anaconda-auth) repository and this repository is deprecated and has been archived.
@@ -17,23 +15,20 @@ to use ``conda-token`` to authenticate and configure your Anaconda or Miniconda 
 using the token you receive in your email after purchasing a subscription and will configure your ``default_channels``
 setting in your Conda configuration.
 
-Purchase Commercial Edition
----------------------------
+## Purchase Commercial Edition
 
 After you have purchased a subscription to Commercial Edition at https://anaconda.cloud/register you will receive
 an email containing an access token. 
 The token is 48 characters in lengths and contains letters and numbers. You will need this token to authenticate
 your Anaconda or Miniconda install
 
-Install Anaconda or Miniconda
------------------------------
+## Install Anaconda or Miniconda
 
 If you already have Anaconda or Miniconda installed you can skip this step.
 Otherwise download either `Anaconda`_ or `Miniconda`_ and install it on your system.
 
 
-Install conda-token
--------------------
+## Install conda-token
 
 The ``conda-token`` package is available from the Anaconda Distribution.
 You can install ``conda-token`` using either Anaconda Navigator or the Conda command-line-interface (CLI).
@@ -45,8 +40,7 @@ To use the Conda CLI run the following in your terminal
    conda install -n root conda-token
 
 
-Authenticate to Anaconda Commercial Edition
--------------------------------------------
+## Authenticate to Anaconda Commercial Edition
 
 You will need to use the terminal to authenticate to Anaconda Commercial Edition and configure access.
 In your terminal run the following command
