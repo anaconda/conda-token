@@ -2,6 +2,9 @@
 Conda token
 ===============================
 
+> [!WARNING]
+> The `conda-token` implementation has been moved to the [`anaconda-auth`](https://github.com/anaconda/anaconda-auth) repository and this repository is deprecated and has been archived.
+
 .. image:: https://img.shields.io/conda/v/anaconda/conda-token.svg
    :target: https://anaconda.org/anaconda/conda-token
 
